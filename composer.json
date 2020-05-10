@@ -14,7 +14,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "RefinedDigital\\Team\\": "src/"
+      "RefinedDigital\\ProductManager\\": "src/"
     },
     "files": [
         "src/Module/Helpers/helpers.php"
