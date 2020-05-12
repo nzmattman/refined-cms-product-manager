@@ -87,6 +87,13 @@
 
   &__mini-cart {
     flex: 0 0 35%;
+
+    .form__row {
+      margin-top: 20px;
+      .button {
+        width: 100%;
+      }
+    }
   }
 
   &__form {

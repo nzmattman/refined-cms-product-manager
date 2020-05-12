@@ -65,6 +65,12 @@
 .cart__mini-cart {
   flex: 0 0 35%;
 }
+.cart__mini-cart .form__row {
+  margin-top: 20px;
+}
+.cart__mini-cart .form__row .button {
+  width: 100%;
+}
 .cart__form {
   flex: 0 0 60%;
 }

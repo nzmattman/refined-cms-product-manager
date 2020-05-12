@@ -26,7 +26,17 @@ return [
         'product_link' => [
             'active' => true,
             'base_url' => ''
-        ]
+        ],
+        'extra_fees' => [
+            [
+                'name' => 'Processing Fee',
+                'percent' => 10
+            ],
+            [
+                'name' => 'Camels',
+                'value' => 25.99
+            ]
+        ],
     ],
 
     'details_template_id' => '__PRODUCT_ID__',

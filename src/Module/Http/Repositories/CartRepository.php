@@ -14,11 +14,13 @@ class CartRepository {
             $cart->items     = collect([]);
             $cart->discount  = null; // name of discount applied
             $cart->delivery  = null; // name of delivery applied
+            $cart->extra_fees = [];
             $cart->totals    = new \stdClass();
 
             $cart->totals->discount  = 0;
             $cart->totals->sub_total = 0;
             $cart->totals->delivery  = 0;
+            $cart->totals->extra_fees  = 0;
             $cart->totals->gst       = 0;
             $cart->totals->total     = 0;
 
@@ -86,7 +88,6 @@ class CartRepository {
 
     public function setDeliveryZone($zone, $postcode)
     {
-        help()->trace($postcode);
         $cart = $this->get();
         $delivery = new \stdClass();
         $delivery->zone = $zone;
@@ -229,17 +230,39 @@ class CartRepository {
             $cart->totals->delivery = $delivery;
         }
 
+        // add any additional fees.. if set
+        $cartConfig = config('products.cart');
+        if (isset($cartConfig['extra_fees']) && is_array($cartConfig['extra_fees'])) {
+            foreach ($cartConfig['extra_fees'] as $fee) {
+                if (isset($fee['percent'])) {
+                    $rate = $fee['percent'] / 100;
+                    $total = $totals * $rate;
+                }
+
+                if (isset($fee['value'])) {
+                    $total = $fee['value'];
+                }
+
+                $fee['total'] = $total;
+                $cart->extra_fees[] = $fee;
+
+                $totals += $total;
+
+                $cart->totals->extra_fee += $total;
+            }
+        }
+
 
         // add the gst
-        $config = config('products.orders');
+        $orderConfig = config('products.orders');
         $gst = 0;
-        if ($config['gst']['active']) {
-            $rate = $config['gst']['percent'] / 100;
+        if ($orderConfig['gst']['active']) {
+            $rate = $orderConfig['gst']['percent'] / 100;
             $gst = $totals * $rate;
         }
 
         $cart->totals->gst = $gst;
-        if ($gst > 0 && $config['gst']['type'] === 'ex') {
+        if ($gst > 0 && $orderConfig['gst']['type'] === 'ex') {
             $totals += $gst;
         }
 

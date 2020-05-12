@@ -6,7 +6,7 @@
         $defaultFields = [];
         // todo: update this so the field ids are correct
         if($cart->delivery && $cart->delivery->postcode) {
-        $defaultFields['field12'] = $cart->delivery->postcode;
+            $defaultFields['cart__field--postcode'] = $cart->delivery->postcode;
         }
       @endphp
       {!!

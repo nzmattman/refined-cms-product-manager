@@ -2006,6 +2006,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2080,6 +2087,13 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3969,123 +3983,179 @@ var render = function() {
               0
             ),
             _vm._v(" "),
-            _c("tfoot", [
-              _c("tr", [
-                _c(
-                  "td",
-                  {
-                    staticClass:
-                      "cart__cell cart__cell--right cart__cell--no-border",
-                    attrs: { colspan: "4" }
-                  },
-                  [_vm._v(" ")]
-                ),
-                _vm._v(" "),
-                _vm._m(1),
-                _vm._v(" "),
-                _c("td", { staticClass: "cart__cell cart__cell--right" }, [
-                  _vm._v(
-                    "$" + _vm._s(_vm._f("toCurrency")(_vm.totals.sub_total))
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _vm.totals.discount
-                ? _c("tr", [
-                    _c(
-                      "td",
-                      {
-                        staticClass:
-                          "cart__cell cart__cell--right cart__cell--no-border",
-                        attrs: { colspan: "4" }
-                      },
-                      [_vm._v(" ")]
-                    ),
-                    _vm._v(" "),
-                    _vm._m(2),
-                    _vm._v(" "),
-                    _c("td", { staticClass: "cart__cell cart__cell--right" }, [
-                      _vm._v(
-                        "$" + _vm._s(_vm._f("toCurrency")(_vm.totals.discount))
-                      )
-                    ])
+            _c(
+              "tfoot",
+              [
+                _c("tr", [
+                  _c(
+                    "td",
+                    {
+                      staticClass:
+                        "cart__cell cart__cell--right cart__cell--no-border",
+                      attrs: { colspan: "4" }
+                    },
+                    [_vm._v(" ")]
+                  ),
+                  _vm._v(" "),
+                  _vm._m(1),
+                  _vm._v(" "),
+                  _c("td", { staticClass: "cart__cell cart__cell--right" }, [
+                    _vm._v(
+                      "$" + _vm._s(_vm._f("toCurrency")(_vm.totals.sub_total))
+                    )
                   ])
-                : _vm._e(),
-              _vm._v(" "),
-              _vm.totals.delivery
-                ? _c("tr", [
-                    _c(
-                      "td",
-                      {
-                        staticClass:
-                          "cart__cell cart__cell--right cart__cell--no-border",
-                        attrs: { colspan: "4" }
-                      },
-                      [_vm._v(" ")]
-                    ),
-                    _vm._v(" "),
-                    _vm._m(3),
-                    _vm._v(" "),
-                    _c("td", { staticClass: "cart__cell cart__cell--right" }, [
-                      _vm._v(
-                        "$" + _vm._s(_vm._f("toCurrency")(_vm.totals.delivery))
-                      )
-                    ])
-                  ])
-                : _vm._e(),
-              _vm._v(" "),
-              _vm.config.orders.gst.active
-                ? _c("tr", [
-                    _c(
-                      "td",
-                      {
-                        staticClass:
-                          "cart__cell cart__cell--right cart__cell--no-border",
-                        attrs: { colspan: "4" }
-                      },
-                      [_vm._v(" ")]
-                    ),
-                    _vm._v(" "),
-                    _c("td", { staticClass: "cart__cell cart__cell--right" }, [
-                      _c("strong", [
-                        _vm._v("GST "),
-                        _c("small", [
+                ]),
+                _vm._v(" "),
+                _vm.totals.discount
+                  ? _c("tr", [
+                      _c(
+                        "td",
+                        {
+                          staticClass:
+                            "cart__cell cart__cell--right cart__cell--no-border",
+                          attrs: { colspan: "4" }
+                        },
+                        [_vm._v(" ")]
+                      ),
+                      _vm._v(" "),
+                      _vm._m(2),
+                      _vm._v(" "),
+                      _c(
+                        "td",
+                        { staticClass: "cart__cell cart__cell--right" },
+                        [
                           _vm._v(
-                            _vm._s(
-                              _vm.config.orders.gst.type === "inc"
-                                ? "Includes"
-                                : ""
-                            )
+                            "$" +
+                              _vm._s(_vm._f("toCurrency")(_vm.totals.discount))
                           )
-                        ]),
-                        _vm._v(":")
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("td", { staticClass: "cart__cell cart__cell--right" }, [
-                      _vm._v("$" + _vm._s(_vm._f("toCurrency")(_vm.totals.gst)))
+                        ]
+                      )
                     ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.totals.delivery
+                  ? _c("tr", [
+                      _c(
+                        "td",
+                        {
+                          staticClass:
+                            "cart__cell cart__cell--right cart__cell--no-border",
+                          attrs: { colspan: "4" }
+                        },
+                        [_vm._v(" ")]
+                      ),
+                      _vm._v(" "),
+                      _vm._m(3),
+                      _vm._v(" "),
+                      _c(
+                        "td",
+                        { staticClass: "cart__cell cart__cell--right" },
+                        [
+                          _vm._v(
+                            "$" +
+                              _vm._s(_vm._f("toCurrency")(_vm.totals.delivery))
+                          )
+                        ]
+                      )
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.cart.extra_fees
+                  ? _vm._l(_vm.cart.extra_fees, function(fee) {
+                      return _c("tr", [
+                        _c(
+                          "td",
+                          {
+                            staticClass:
+                              "cart__cell cart__cell--right cart__cell--no-border",
+                            attrs: { colspan: "4" }
+                          },
+                          [_vm._v(" ")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "td",
+                          { staticClass: "cart__cell cart__cell--right" },
+                          [_c("strong", [_vm._v(_vm._s(fee.name) + ": ")])]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "td",
+                          { staticClass: "cart__cell cart__cell--right" },
+                          [
+                            _vm._v(
+                              "$" + _vm._s(_vm._f("toCurrency")(fee.total))
+                            )
+                          ]
+                        )
+                      ])
+                    })
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.config.orders.gst.active
+                  ? _c("tr", [
+                      _c(
+                        "td",
+                        {
+                          staticClass:
+                            "cart__cell cart__cell--right cart__cell--no-border",
+                          attrs: { colspan: "4" }
+                        },
+                        [_vm._v(" ")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "td",
+                        { staticClass: "cart__cell cart__cell--right" },
+                        [
+                          _c("strong", [
+                            _vm._v("GST "),
+                            _c("small", [
+                              _vm._v(
+                                _vm._s(
+                                  _vm.config.orders.gst.type === "inc"
+                                    ? "Includes"
+                                    : ""
+                                )
+                              )
+                            ]),
+                            _vm._v(":")
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "td",
+                        { staticClass: "cart__cell cart__cell--right" },
+                        [
+                          _vm._v(
+                            "$" + _vm._s(_vm._f("toCurrency")(_vm.totals.gst))
+                          )
+                        ]
+                      )
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _c("tr", [
+                  _c(
+                    "td",
+                    {
+                      staticClass:
+                        "cart__cell cart__cell--right cart__cell--no-border",
+                      attrs: { colspan: "4" }
+                    },
+                    [_vm._v(" ")]
+                  ),
+                  _vm._v(" "),
+                  _vm._m(4),
+                  _vm._v(" "),
+                  _c("td", { staticClass: "cart__cell cart__cell--right" }, [
+                    _vm._v("$" + _vm._s(_vm._f("toCurrency")(_vm.totals.total)))
                   ])
-                : _vm._e(),
-              _vm._v(" "),
-              _c("tr", [
-                _c(
-                  "td",
-                  {
-                    staticClass:
-                      "cart__cell cart__cell--right cart__cell--no-border",
-                    attrs: { colspan: "4" }
-                  },
-                  [_vm._v(" ")]
-                ),
-                _vm._v(" "),
-                _vm._m(4),
-                _vm._v(" "),
-                _c("td", { staticClass: "cart__cell cart__cell--right" }, [
-                  _vm._v("$" + _vm._s(_vm._f("toCurrency")(_vm.totals.total)))
                 ])
-              ])
-            ])
+              ],
+              2
+            )
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "cart__checkout-button" }, [
@@ -4229,128 +4299,177 @@ var render = function() {
               0
             ),
             _vm._v(" "),
-            _c("tfoot", [
-              _c("tr", [
-                _vm._m(1),
-                _vm._v(" "),
-                _c("td", { staticClass: "cart__cell cart__cell--right" }, [
-                  _vm._v(
-                    "$" + _vm._s(_vm._f("toCurrency")(_vm.totals.sub_total))
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _vm.totals.discount
-                ? _c("tr", [
-                    _vm._m(2),
-                    _vm._v(" "),
-                    _c("td", { staticClass: "cart__cell cart__cell--right" }, [
-                      _vm._v(
-                        "$" + _vm._s(_vm._f("toCurrency")(_vm.totals.discount))
-                      )
-                    ])
-                  ])
-                : _vm._e(),
-              _vm._v(" "),
-              _vm.deliveryOptions.length
-                ? _c("tr", [
-                    _c(
-                      "td",
-                      { staticClass: "cart__cell", attrs: { colspan: "2" } },
-                      [
-                        _vm._m(3),
-                        _vm._v(" "),
-                        _vm._l(_vm.deliveryOptions, function(zone) {
-                          return _c(
-                            "div",
-                            { staticClass: "cart__delivery-zone" },
-                            [
-                              _c(
-                                "span",
-                                { staticClass: "cart__delivery-zone-name" },
-                                [
-                                  _c("input", {
-                                    attrs: {
-                                      type: "radio",
-                                      name: "deliveryZone",
-                                      id: "delivery_zone_" + zone.id
-                                    },
-                                    domProps: { checked: zone.isChecked },
-                                    on: {
-                                      change: function($event) {
-                                        return _vm.setDelivery(zone)
-                                      }
-                                    }
-                                  }),
-                                  _vm._v(" "),
-                                  _c(
-                                    "label",
-                                    {
-                                      attrs: { for: "delivery_zone_" + zone.id }
-                                    },
-                                    [_vm._v(_vm._s(zone.name) + ":")]
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "span",
-                                { staticClass: "cart__delivery-zone-price" },
-                                [
-                                  zone.price
-                                    ? [
-                                        _vm._v(
-                                          "$" +
-                                            _vm._s(
-                                              _vm._f("toCurrency")(zone.price)
-                                            )
-                                        )
-                                      ]
-                                    : [_vm._v("Free")]
-                                ],
-                                2
-                              )
-                            ]
-                          )
-                        })
-                      ],
-                      2
+            _c(
+              "tfoot",
+              [
+                _c("tr", [
+                  _vm._m(1),
+                  _vm._v(" "),
+                  _c("td", { staticClass: "cart__cell cart__cell--right" }, [
+                    _vm._v(
+                      "$" + _vm._s(_vm._f("toCurrency")(_vm.totals.sub_total))
                     )
                   ])
-                : _vm._e(),
-              _vm._v(" "),
-              _vm.config.orders.gst.active
-                ? _c("tr", [
-                    _c("td", { staticClass: "cart__cell" }, [
-                      _c("strong", [
-                        _vm._v("GST "),
-                        _c("small", [
-                          _vm._v(
-                            _vm._s(
-                              _vm.config.orders.gst.type === "inc"
-                                ? "Includes"
-                                : ""
-                            )
-                          )
-                        ]),
-                        _vm._v(":")
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("td", { staticClass: "cart__cell cart__cell--right" }, [
-                      _vm._v("$" + _vm._s(_vm._f("toCurrency")(_vm.totals.gst)))
-                    ])
-                  ])
-                : _vm._e(),
-              _vm._v(" "),
-              _c("tr", [
-                _vm._m(4),
+                ]),
                 _vm._v(" "),
-                _c("td", { staticClass: "cart__cell cart__cell--right" }, [
-                  _vm._v("$" + _vm._s(_vm._f("toCurrency")(_vm.totals.total)))
+                _vm.totals.discount
+                  ? _c("tr", [
+                      _vm._m(2),
+                      _vm._v(" "),
+                      _c(
+                        "td",
+                        { staticClass: "cart__cell cart__cell--right" },
+                        [
+                          _vm._v(
+                            "$" +
+                              _vm._s(_vm._f("toCurrency")(_vm.totals.discount))
+                          )
+                        ]
+                      )
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.deliveryOptions.length
+                  ? _c("tr", [
+                      _c(
+                        "td",
+                        { staticClass: "cart__cell", attrs: { colspan: "2" } },
+                        [
+                          _vm._m(3),
+                          _vm._v(" "),
+                          _vm._l(_vm.deliveryOptions, function(zone) {
+                            return _c(
+                              "div",
+                              { staticClass: "cart__delivery-zone" },
+                              [
+                                _c(
+                                  "span",
+                                  { staticClass: "cart__delivery-zone-name" },
+                                  [
+                                    _c("input", {
+                                      attrs: {
+                                        type: "radio",
+                                        name: "deliveryZone",
+                                        id: "delivery_zone_" + zone.id
+                                      },
+                                      domProps: { checked: zone.isChecked },
+                                      on: {
+                                        change: function($event) {
+                                          return _vm.setDelivery(zone)
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c(
+                                      "label",
+                                      {
+                                        attrs: {
+                                          for: "delivery_zone_" + zone.id
+                                        }
+                                      },
+                                      [_vm._v(_vm._s(zone.name) + ":")]
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "span",
+                                  { staticClass: "cart__delivery-zone-price" },
+                                  [
+                                    zone.price
+                                      ? [
+                                          _vm._v(
+                                            "$" +
+                                              _vm._s(
+                                                _vm._f("toCurrency")(zone.price)
+                                              )
+                                          )
+                                        ]
+                                      : [_vm._v("Free")]
+                                  ],
+                                  2
+                                )
+                              ]
+                            )
+                          })
+                        ],
+                        2
+                      )
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.cart.extra_fees
+                  ? _vm._l(_vm.cart.extra_fees, function(fee) {
+                      return _c("tr", [
+                        _c(
+                          "td",
+                          {
+                            staticClass:
+                              "cart__cell cart__cell--right cart__cell--no-border",
+                            attrs: { colspan: "4" }
+                          },
+                          [_vm._v(" ")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "td",
+                          { staticClass: "cart__cell cart__cell--right" },
+                          [_c("strong", [_vm._v(_vm._s(fee.name) + ": ")])]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "td",
+                          { staticClass: "cart__cell cart__cell--right" },
+                          [
+                            _vm._v(
+                              "$" + _vm._s(_vm._f("toCurrency")(fee.total))
+                            )
+                          ]
+                        )
+                      ])
+                    })
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.config.orders.gst.active
+                  ? _c("tr", [
+                      _c("td", { staticClass: "cart__cell" }, [
+                        _c("strong", [
+                          _vm._v("GST "),
+                          _c("small", [
+                            _vm._v(
+                              _vm._s(
+                                _vm.config.orders.gst.type === "inc"
+                                  ? "Includes"
+                                  : ""
+                              )
+                            )
+                          ]),
+                          _vm._v(":")
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "td",
+                        { staticClass: "cart__cell cart__cell--right" },
+                        [
+                          _vm._v(
+                            "$" + _vm._s(_vm._f("toCurrency")(_vm.totals.gst))
+                          )
+                        ]
+                      )
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _c("tr", [
+                  _vm._m(4),
+                  _vm._v(" "),
+                  _c("td", { staticClass: "cart__cell cart__cell--right" }, [
+                    _vm._v("$" + _vm._s(_vm._f("toCurrency")(_vm.totals.total)))
+                  ])
                 ])
-              ])
-            ])
+              ],
+              2
+            )
           ])
         ])
   ])
@@ -16774,6 +16893,24 @@ var productManager = new Vue({
         total.add(cart.delivery.zone.price);
       }
 
+      if (cart.extra_fees && cart.extra_fees.length) {
+        cart.extra_fees.forEach(function (fee) {
+          var feeTotal = 0;
+
+          if (fee.percent) {
+            var rate = fee / 100;
+            feeTotal = numeral__WEBPACK_IMPORTED_MODULE_4___default()(totals.value()).multiply(rate).value();
+          }
+
+          if (fee.amount) {
+            feeTotal = fee.amount;
+          }
+
+          fee.total = feeTotal;
+          total.add(feeTotal);
+        });
+      }
+
       if (config.orders.gst.active) {
         var rate = numeral__WEBPACK_IMPORTED_MODULE_4___default()(config.orders.gst.percent).divide(100).value();
         var gst = numeral__WEBPACK_IMPORTED_MODULE_4___default()(total.value()).multiply(rate).value();
@@ -17096,8 +17233,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /srv/dev.com/refineddigital/product-manager/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /srv/dev.com/refineddigital/product-manager/resources/sass/cart.scss */"./resources/sass/cart.scss");
+__webpack_require__(/*! /Users/matthias/Web/dev/product-manager/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /Users/matthias/Web/dev/product-manager/resources/sass/cart.scss */"./resources/sass/cart.scss");
 
 
 /***/ })

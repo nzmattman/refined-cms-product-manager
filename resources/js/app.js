@@ -61,6 +61,25 @@ export const productManager = new Vue({
         total.add(cart.delivery.zone.price);
       }
 
+
+      if (cart.extra_fees && cart.extra_fees.length) {
+        cart.extra_fees.forEach(fee => {
+          let feeTotal = 0;
+          if (fee.percent) {
+            const rate = fee / 100;
+            feeTotal = numeral(totals.value()).multiply(rate).value();
+          }
+
+          if (fee.amount) {
+            feeTotal = fee.amount;
+          }
+
+          fee.total = feeTotal;
+
+          total.add(feeTotal);
+        });
+      }
+
       if (config.orders.gst.active) {
         const rate = numeral(config.orders.gst.percent).divide(100).value();
         const gst = numeral(total.value()).multiply(rate).value();
