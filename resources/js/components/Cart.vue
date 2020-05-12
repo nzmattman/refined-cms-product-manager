@@ -1,0 +1,131 @@
+<template>
+  <div>
+    <div class="cart__no-results" v-if="!items.length">
+      Your cart is currently empty.
+    </div>
+    <div class="cart" v-else>
+      <table class="cart__table">
+        <thead>
+          <tr class="cart__row">
+            <th class="cart__cell cart__cell--remove"></th>
+            <th class="cart__cell cart__cell--image"></th>
+            <th class="cart__cell cart__cell--product">Product</th>
+            <th class="cart__cell cart__cell--right">Price</th>
+            <th class="cart__cell cart__cell--right">Quantity</th>
+            <th class="cart__cell cart__cell--right">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="cart__row" v-for="item of items">
+            <td class="cart__cell cart__cell--remove"><a href="#" @click.prevent.stop="remove(item)"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="times" class="svg-inline--fa fa-times fa-w-11" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg></a></td>
+            <td class="cart__cell cart__cell--image">
+              <a v-if="config.cart.product_link.active && item.product.image" :href="item.product.url">
+                <img :src="item.product.image"/>
+              </a>
+              <img v-if="!config.cart.product_link.active && item.product.image" :src="item.product.image"/>
+            </td>
+            <td class="cart__cell cart__cell--product">
+              <a v-if="config.cart.product_link.active" :href="item.product.url"><strong>{{ item.product.name }}</strong></a>
+              <strong v-else>{{ item.product.name }}</strong>
+              <ul class="cart__variations" v-if="item.variations.length">
+                <li class="cart__variation" v-if="variation.value" v-for="variation of item.variations">
+                  <strong>{{ variation.name }}:</strong> <span>{{ variation.value }}</span>
+                </li>
+              </ul>
+            </td>
+            <td class="cart__cell cart__cell--right">${{ item.price | toCurrency }}</td>
+            <td class="cart__cell cart__cell--right"><input type="number" v-model="item.quantity" @keyup="updateTotal(item)" class="cart__input"/></td>
+            <td class="cart__cell cart__cell--right">${{ item.total | toCurrency }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td class="cart__cell cart__cell--right cart__cell--no-border" colspan="4">&nbsp;</td>
+            <td class="cart__cell cart__cell--right"><strong>Sub total: </strong></td>
+            <td class="cart__cell cart__cell--right">${{ totals.sub_total | toCurrency }}</td>
+          </tr>
+          <tr v-if="totals.discount">
+            <td class="cart__cell cart__cell--right cart__cell--no-border" colspan="4">&nbsp;</td>
+            <td class="cart__cell cart__cell--right"><strong>Discount: </strong></td>
+            <td class="cart__cell cart__cell--right">${{ totals.discount | toCurrency }}</td>
+          </tr>
+          <tr v-if="totals.delivery">
+            <td class="cart__cell cart__cell--right cart__cell--no-border" colspan="4">&nbsp;</td>
+            <td class="cart__cell cart__cell--right"><strong>Delivery: </strong></td>
+            <td class="cart__cell cart__cell--right">${{ totals.delivery | toCurrency }}</td>
+          </tr>
+          <tr v-if="config.orders.gst.active">
+            <td class="cart__cell cart__cell--right cart__cell--no-border" colspan="4">&nbsp;</td>
+            <td class="cart__cell cart__cell--right"><strong>GST <small>{{ config.orders.gst.type === 'inc' ? 'Includes' : '' }}</small>:</strong></td>
+            <td class="cart__cell cart__cell--right">${{ totals.gst | toCurrency }}</td>
+          </tr>
+          <tr>
+            <td class="cart__cell cart__cell--right cart__cell--no-border" colspan="4">&nbsp;</td>
+            <td class="cart__cell cart__cell--right"><strong>Total: </strong></td>
+            <td class="cart__cell cart__cell--right">${{ totals.total | toCurrency }}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="cart__checkout-button">
+        <a :href="`${path}/checkout`" class="button">Checkout</a>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<script>
+  import axios from 'axios';
+  import { productManager } from '../app';
+
+  export default {
+
+    props: ['cart', 'config', 'path'],
+
+    data() {
+      return {
+        items: [],
+        totals: null
+      }
+    },
+
+    created() {
+      this.items = [... this.cart.items];
+      this.totals = {... this.cart.totals };
+    },
+
+    methods: {
+
+      remove(item) {
+        if (confirm('Are you sure you want to remove this item?')) {
+          axios.delete(`refined/products/${item.product.id}/cart/${item.key}`)
+            .then(() => {
+              const index = this.items.indexOf(item);
+              if (index > -1) {
+                this.items.splice(index, 1);
+                this.updateTotals();
+              }
+            });
+        }
+
+      },
+
+      updateTotal(item) {
+        item.total = item.price * parseInt(item.quantity, 10);
+
+        axios.put(`refined/products/${item.product.id}/cart/update-quantity`, {
+          quantity: item.quantity,
+          key: item.key
+        });
+
+        this.updateTotals();
+      },
+
+      updateTotals() {
+        this.totals = productManager.updateTotals(this.items, this.totals, this.cart, this.config);
+      }
+    }
+
+  }
+</script>

@@ -1,0 +1,35 @@
+{
+  "name": "refined-cms-product-manager",
+  "version": "1.0.0",
+  "description": "Product Manager for Refined CMS",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm run development",
+    "development": "NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "npm run development -- --watch",
+    "hot": "NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "prod": "npm run production",
+    "production": "NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/refineddigital/cms-product-manager.git"
+  },
+  "author": "Matthias Law",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/refineddigital/cms-product-manager/issues"
+  },
+  "homepage": "https://github.com/refineddigital/cms-product-manager#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "numeral": "^2.0.6",
+    "vue": "^2.6.11"
+  },
+  "devDependencies": {
+    "laravel-mix": "^5.0.4",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.6.11"
+  }
+}

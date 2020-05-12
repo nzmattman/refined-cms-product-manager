@@ -11,7 +11,7 @@ use RefinedDigital\CMS\Modules\Core\Http\Repositories\CoreRepository;
 class VariationController extends CoreController
 {
     protected $model = 'RefinedDigital\ProductManager\Module\Models\ProductVariationType';
-    protected $prefix = 'productManager::variations';
+    protected $prefix = 'products::variations';
     protected $route = 'product-variations';
     protected $heading = 'Variation Types';
     protected $button = 'a Variation Type';

@@ -93,7 +93,7 @@ class ProductVariationType extends CoreModel implements Sortable
     {
         $name = $this->name;
         if ($this->display_name) {
-            $name .= '('.$this->display_name.')';
+            $name .= ' ('.$this->display_name.')';
         }
 
         return $name;

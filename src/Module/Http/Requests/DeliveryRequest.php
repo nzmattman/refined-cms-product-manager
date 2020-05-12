@@ -4,7 +4,7 @@ namespace RefinedDigital\ProductManager\Module\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class VariationRequest extends FormRequest
+class DeliveryRequest extends FormRequest
 {
     /**
      * Determine if the service is authorized to make this request.
@@ -25,8 +25,8 @@ class VariationRequest extends FormRequest
     {
 
         $args = [
-            'name'                => ['required' => 'required'],
-            'variations'          => ['required' => 'required'],
+            'name'           => ['required' => 'required'],
+            'price'          => ['required' => 'required'],
         ];
 
         // return the results to set for validation

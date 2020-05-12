@@ -2,6 +2,7 @@
 
 namespace RefinedDigital\ProductManager\Module\Http\Repositories;
 
+use RefinedDigital\ProductManager\Module\Models\DeliveryZone;
 use RefinedDigital\ProductManager\Module\Models\Product;
 use RefinedDigital\CMS\Modules\Core\Http\Repositories\CoreRepository;
 use RefinedDigital\ProductManager\Module\Models\ProductVariation;
@@ -144,11 +145,6 @@ class ProductRepository extends CoreRepository
         ;
     }
 
-    public function getVariationOptions($product)
-    {
-        // todo: somehow do the select logic based on the variations and stuff
-    }
-
     public function getItemsForRepeatable($product)
     {
         $variationTypeValues = $this->getVariationTypeValues($product->id);
@@ -208,6 +204,14 @@ class ProductRepository extends CoreRepository
     {
         return \DB::table('product_product_variation_type_value')
             ->whereProductId($productId)
+            ->orderBy('id')
+            ->get();
+    }
+
+    public function getDeliveryZones()
+    {
+        return DeliveryZone::whereActive(1)
+            ->orderBy('position')
             ->get();
     }
 }

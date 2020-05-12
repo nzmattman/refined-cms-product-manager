@@ -69,6 +69,18 @@ class CreateProductManagerTable extends Migration
             $table->float('price')->nullable();
             $table->float('sale_price')->nullable();
         });
+
+        Schema::create('delivery_zones', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
+            $table->softDeletes();
+            $table->boolean('active')->default(1);
+            $table->integer('position');
+            $table->string('name');
+            $table->float('price')->nullable();
+            $table->longText('postcodes')->nullable();
+            $table->longText('notes')->nullable();
+        });
     }
 
     /**
@@ -84,5 +96,6 @@ class CreateProductManagerTable extends Migration
         Schema::dropIfExists('product_variation_type_values');
         Schema::dropIfExists('product_product_variation_type');
         Schema::dropIfExists('product_product_variation_type_value');
+        Schema::dropIfExists('delivery_zones');
     }
 }

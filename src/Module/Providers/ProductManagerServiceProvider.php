@@ -18,7 +18,7 @@ class ProductManagerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        view()->addNamespace('productManager', [
+        view()->addNamespace('products', [
             base_path().'/resources/views',
             __DIR__.'/../Resources/views',
         ]);
@@ -32,7 +32,7 @@ class ProductManagerServiceProvider extends ServiceProvider
         }
 
         $this->publishes([
-            __DIR__.'/../../../config/product-manager.php' => config_path('product-manager.php'),
+            __DIR__.'/../../../config/products.php' => config_path('products.php'),
         ], 'product-manager');
     }
 
@@ -49,15 +49,15 @@ class ProductManagerServiceProvider extends ServiceProvider
             ->addRouteFile('productManager', __DIR__.'/../Http/public-routes.php');
 
 
-        $this->mergeConfigFrom(__DIR__.'/../../../config/product-manager.php', 'ProductManager');
+        $this->mergeConfigFrom(__DIR__.'/../../../config/products.php', 'ProductManager');
 
         $children = [
             (object) [ 'name' => 'Products', 'route' => 'products', 'activeFor' => ['products']],
             (object) [ 'name' => 'Variation Types', 'route' => 'product-variations', 'activeFor' => ['product-variations']],
-            // (object) [ 'name' => 'Delivery Options', 'route' => 'delivery-options', 'activeFor' => ['delivery-options']],
+            (object) [ 'name' => 'Delivery Options', 'route' => 'delivery-zones', 'activeFor' => ['delivery-zones']],
         ];
 
-        if (config('product-manager.orders.active')) {
+        if (config('products.orders.active')) {
             $children[] = (object) [ 'name' => 'Orders', 'route' => 'orders', 'activeFor' => ['orders']];
         }
 
@@ -66,7 +66,7 @@ class ProductManagerServiceProvider extends ServiceProvider
             'name' => 'Product Manager',
             'icon' => 'fas fa-gift',
             'route' => 'products',
-            'activeFor' => ['products','product-variations', 'delivery-options'],
+            'activeFor' => ['products','product-variations', 'delivery-zones'],
             'children' => $children
         ];
 

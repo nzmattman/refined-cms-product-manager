@@ -11,7 +11,7 @@ use RefinedDigital\CMS\Modules\Core\Http\Repositories\CoreRepository;
 class ProductController extends CoreController
 {
     protected $model = 'RefinedDigital\ProductManager\Module\Models\Product';
-    protected $prefix = 'productManager::products';
+    protected $prefix = 'products::products';
     protected $route = 'products';
     protected $heading = 'Products';
     protected $button = 'a Product';

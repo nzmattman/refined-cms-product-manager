@@ -2,9 +2,8 @@
 
 namespace RefinedDigital\ProductManager\Module\Http\Repositories;
 
-use RefinedDigital\CMS\Modules\Core\Http\Repositories\CoreRepository;
 
-class CartRepository extends CoreRepository {
+class CartRepository {
     protected $sessionKey = 'cart';
 
     public function get()
@@ -26,6 +25,25 @@ class CartRepository extends CoreRepository {
             session()->put($this->sessionKey, $cart);
         }
 
+        // adjust the urls for the products
+        if ($cart->items->count()) {
+            foreach ($cart->items as $item) {
+                if (isset($item->product->uri)) {
+                    if (config('products.cart.product_link.active')) {
+                        $uri = [
+                            ltrim(rtrim(config('app.url'), '/'), '/'),
+                            ltrim(rtrim(config('products.cart.product_link.base_url'), '/'), '/'),
+                            ltrim(rtrim($item->product->uri, '/'), '/'),
+                        ];
+                        $uri = array_filter($uri);
+                        $item->product->url = implode('/', $uri);
+                    }
+                }
+
+                $item->total = $item->price * $item->quantity;
+            }
+        }
+
         return $cart;
     }
 
@@ -36,14 +54,54 @@ class CartRepository extends CoreRepository {
 
     public function add($product, $request)
     {
-        $cart = $this->get();
-
-        $item = $this->findItem($product, $request->get('variation'));
+        $item = $this->findItem($product, $this->getVariationsFromRequest($request));
         $item->quantity += $request->get('quantity') ?: 1;
 
-        $itemCollectionKey = $cart->items->search(function($record) use($item) {
-            return $record->key === $item->key;
-        });
+        $this->update($item);
+    }
+
+    public function remove($itemKey)
+    {
+        $cart = $this->get();
+        $item = $this->getItemByKey($itemKey);
+        $itemCollectionKey = $this->findItemCollectionKey($cart, $item);
+
+        if (is_numeric($itemCollectionKey)) {
+            $cart->items->splice($itemCollectionKey, 1);
+        }
+
+        session()->put($this->sessionKey, $cart);
+
+        $this->updateTotals();
+    }
+
+    public function updateQuantity($request)
+    {
+        $itemKey = $request->get('key');
+        $item = $this->getItemByKey($itemKey);
+        $item->quantity = $request->get('quantity') ?: 1;
+
+        $this->update($item);
+    }
+
+    public function setDeliveryZone($zone, $postcode)
+    {
+        help()->trace($postcode);
+        $cart = $this->get();
+        $delivery = new \stdClass();
+        $delivery->zone = $zone;
+        $delivery->postcode = $postcode;
+        $cart->delivery = $delivery;
+
+        session()->put($this->sessionKey, $cart);
+    }
+
+    private function update($item)
+    {
+
+        $cart = $this->get();
+
+        $itemCollectionKey = $this->findItemCollectionKey($cart, $item);
 
         if (!is_numeric($itemCollectionKey)) {
             $cart->items->push($item);
@@ -56,28 +114,10 @@ class CartRepository extends CoreRepository {
         $this->updateTotals();
     }
 
-    public function remove($product, $request)
-    {
-        $cart = $this->get();
-        $item = $this->findItem($product, $request->get('variation'));
-
-        $itemCollectionKey = $cart->items->search(function($record) use($item) {
-            return $record->key === $item->key;
-        });
-
-        if (is_numeric($itemCollectionKey)) {
-            $cart->items->splice($itemCollectionKey, 1);
-        }
-
-        session()->put($this->sessionKey, $cart);
-
-        $this->updateTotals();
-    }
-
-    public function getItemPrice($product, $variationKey = false, $key = 'price')
+    private function getItemPrice($product, $variationKey = false, $key = 'price')
     {
         if ($variationKey) {
-            $variation = $this->findVariation($product, $variationKey);
+            $variation = $product->variation_type_values[$variationKey];
             if (isset($variation->{$key})) {
                 return $variation->{$key};
             }
@@ -86,44 +126,76 @@ class CartRepository extends CoreRepository {
         return $product->{$key};
     }
 
-    private function findItem($product, $variation)
+    private function findItem($product, $variations)
     {
         $cart = $this->get();
-        $key = $this->getItemKey($product, $variation);
-        $item = $cart->items->first(function ($value) use($key) {
-            if ($value->key === $key) {
+        $itemKey = $this->getItemKey($product, $variations);
+        $item = $cart->items->first(function ($value) use($itemKey) {
+            if ($value->key === $itemKey) {
                 return $value;
             }
         });
 
         if (!$item) {
-            return $this->createItem($product, $variation);
+            return $this->createItem($product, $variations);
         }
 
         return $item;
     }
 
-    private function createItem($product, $variation = false)
+    private function findItemCollectionKey($cart, $item)
     {
-        $var = $this->findVariation($product, $variation);
+        return $cart->items->search(function($record) use($item) {
+            return $record->key === $item->key;
+        });
+    }
+
+    private function createItem($product, $variations = false)
+    {
+        $pro = new \stdClass();
+        $pro->id = $product->id;
+        $pro->name = $product->name;
+        $pro->image = asset(image()
+            ->load($product->image)
+            ->width(config('products.cart.image.width'))
+            ->height(config('products.cart.image.height'))
+            ->string())
+        ;
+        $pro->uri = $product->meta->uri;
+
+        $variationKey = $this->getVariationKeys($variations);
         $item = new \stdClass();
-        $item->id = $product->id;
-        $item->key = $this->getItemKey($product, $variation);
-        $item->variationKey = $variation ?: null;
-        $item->product = $product->name;
-        $item->variation = $var ? $var->name : null;
+        $item->key = $this->getItemKey($product, $variations);
+        $item->variationKey = $variationKey;
+        $item->product = $pro;
+        $item->variations = $this->findVariation($product, $variationKey);
         $item->quantity = 0;
-        $item->price = (float) $this->getItemPrice($product, $variation);
-        $item->sale_price = (float) $this->getItemPrice($product, $variation, 'sale_price');
+
+        $prices = new \stdClass();
+        $prices->price = (float) $this->getItemPrice($product, $variationKey);
+        $prices->sale_price = (float) $this->getItemPrice($product, $variationKey, 'sale_price');
+        $item->prices = $prices;
+        $item->price = $prices->sale_price ?: $prices->price;
 
         return $item;
     }
 
-    private function getItemKey($product, $variation = false)
+    private function getVariationKeys($variations)
+    {
+        if (!$variations) {
+            return null;
+        }
+
+        return implode(',', array_pluck($variations, 'id'));
+    }
+
+    private function getItemKey($product, $variations = false)
     {
         $itemKey = 'product:'.$product->id;
-        if ($variation) {
-            $itemKey .= '-variation:'.$variation;
+        if ($variations && is_array($variations)) {
+            foreach($variations as $variation) {
+                $itemKey .= '-variation:'.$variation->id;
+            }
         }
 
         return $itemKey;
@@ -131,36 +203,15 @@ class CartRepository extends CoreRepository {
 
     private function findVariation($product, $variationKey)
     {
-        if ($variationKey && isset($product->variations) && sizeof($product->variations)) {
-            $variation = array_first($product->variations, function ($value, $key) use ($variationKey) {
-                return (int)$variationKey === (int)$key;
-            });
-
-            if ($variation) {
-                $var = new \stdClass();
-                foreach($variation as $key => $data) {
-                    $var->{$key} = $data->content;
-                }
-                return $var;
-            }
-
-            return null;
-        }
-
-        return null;
+        $variationRepo = new VariationRepository();
+        return $variationRepo->findVariationsByKeys($product, $variationKey);
     }
 
     private function updateTotals()
     {
         $cart = $this->get();
         $totals = $cart->items->sum(function($item) {
-            if ($item->sale_price) {
-                $price = $item->sale_price;
-            } else {
-                $price = $item->price;
-            }
-
-            return $price * $item->quantity;
+            return $item->price * $item->quantity;
         });
         $cart->totals->sub_total = $totals;
 
@@ -173,14 +224,14 @@ class CartRepository extends CoreRepository {
 
         // add the shipping
         if ($cart->delivery) {
-            $delivery = $cart->delivery->amount;
+            $delivery = $cart->delivery->zone->price;
             $totals += $delivery;
             $cart->totals->delivery = $delivery;
         }
 
 
         // add the gst
-        $config = config('product-manager.orders');
+        $config = config('products.orders');
         $gst = 0;
         if ($config['gst']['active']) {
             $rate = $config['gst']['percent'] / 100;
@@ -198,4 +249,26 @@ class CartRepository extends CoreRepository {
         session()->put($this->sessionKey, $cart);
     }
 
+    private function getItemByKey($itemKey)
+    {
+        $cart = $this->get();
+        return $cart->items->first(function ($value) use($itemKey) {
+            if ($value->key === $itemKey) {
+                return $value;
+            }
+        });
+    }
+
+
+    private function getVariationsFromRequest($request)
+    {
+        $variations = $request->get('variations');
+        if (!is_array($variations)) {
+            return null;
+        }
+
+        return array_map(function ($variation) {
+            return json_decode($variation);
+        }, $variations);
+    }
 }

@@ -43,6 +43,7 @@ class Install extends Command
         $this->migrate();
         $this->seed();
         $this->publish();
+        $this->createSymLink();
         $this->info('Product Manager has been successfully installed');
     }
 
@@ -88,6 +89,26 @@ class Install extends Command
             $replace = [ $template->id ];
             file_put_contents($configFile, str_replace($search, $replace, $file));
         }
+    }
+
+    protected function createSymLink()
+    {
+        $link = getcwd().'/public/vendor/';
+        $target = '../../vendor/refineddigital/cms-product-manager/assets/';
+
+        // create the directories
+        if (!is_dir($link)) {
+            mkdir($link);
+        }
+        $link .= 'refined/product-manager';
+
+        if (! windows_os()) {
+            return symlink($target, $link);
+        }
+
+        $mode = is_dir($target) ? 'J' : 'H';
+
+        exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
     }
 
 }

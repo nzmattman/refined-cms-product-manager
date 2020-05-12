@@ -9,6 +9,7 @@ use RefinedDigital\CMS\Modules\Core\Traits\IsArticle;
 use RefinedDigital\CMS\Modules\Pages\Traits\IsPage;
 use RefinedDigital\CMS\Modules\Tags\Traits\Taggable;
 use RefinedDigital\ProductManager\Module\Http\Repositories\ProductRepository;
+use RefinedDigital\ProductManager\Module\Http\Repositories\VariationRepository;
 use Spatie\EloquentSortable\Sortable;
 
 class Product extends CoreModel implements Sortable
@@ -44,9 +45,10 @@ class Product extends CoreModel implements Sortable
     ];
 
     protected $appends = [
-        'excerpt',
         'variations',
-        'variation_options'
+        'excerpt',
+        'variation_options',
+        'variation_type_values',
     ];
 
     /**
@@ -174,9 +176,16 @@ class Product extends CoreModel implements Sortable
 
     public function getVariationOptionsAttribute()
     {
-        $repo = new ProductRepository();
+        $repo = new VariationRepository();
 
         return $repo->getVariationOptions($this);
+    }
+
+    public function getVariationTypeValuesAttribute()
+    {
+        $repo = new VariationRepository();
+
+        return $repo->getVariationTypeValues($this->id);
     }
 
     public function related_products()

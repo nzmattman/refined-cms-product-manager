@@ -18,5 +18,16 @@ return [
         ]
     ],
 
+    'cart' => [
+        'image' => [
+            'width' => 300,
+            'height' => 300,
+        ],
+        'product_link' => [
+            'active' => true,
+            'base_url' => ''
+        ]
+    ],
+
     'details_template_id' => '__PRODUCT_ID__',
 ];

@@ -31,6 +31,16 @@ class ProductManagerTemplatesTableSeeder extends Seeder
                 'source'    => 'product-details',
                 'active'    => 0,
             ],
+            [
+                'name'      => 'Cart',
+                'source'    => 'cart',
+                'active'    => 1,
+            ],
+            [
+                'name'      => 'Checkout',
+                'source'    => 'checkout',
+                'active'    => 1,
+            ],
         ];
 
         foreach($templates as $pos => $u) {
