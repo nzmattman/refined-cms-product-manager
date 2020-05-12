@@ -19,7 +19,7 @@ class ProductManagerServiceProvider extends ServiceProvider
     public function boot()
     {
         view()->addNamespace('products', [
-            base_path().'/resources/views',
+            base_path('resources/views/forms'),
             __DIR__.'/../Resources/views',
         ]);
 
@@ -47,7 +47,6 @@ class ProductManagerServiceProvider extends ServiceProvider
             ->addRouteFile('productManager', __DIR__.'/../Http/routes.php');
         app(PublicRouteAggregate::class)
             ->addRouteFile('productManager', __DIR__.'/../Http/public-routes.php');
-
 
         $this->mergeConfigFrom(__DIR__.'/../../../config/products.php', 'ProductManager');
 
