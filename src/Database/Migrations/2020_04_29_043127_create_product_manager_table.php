@@ -81,6 +81,60 @@ class CreateProductManagerTable extends Migration
             $table->longText('postcodes')->nullable();
             $table->longText('notes')->nullable();
         });
+
+        Schema::create('orders', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
+            $table->softDeletes();
+            $table->timestamp('paid_at');
+            $table->string('payment_method')->nullable();
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('company_name')->nullable();
+            $table->string('address')->nullable();
+            $table->string('address_2')->nullable();
+            $table->string('suburb')->nullable();
+            $table->string('state')->nullable();
+            $table->string('postcode')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
+            $table->text('additional_information')->nullable();
+            $table->integer('delivery_zone_id')->nullable();
+            $table->boolean('gst_active')->default(0);
+            $table->string('gst_method')->nullable();
+            $table->float('discount')->nullable();
+            $table->float('sub_total')->nullable();
+            $table->float('delivery')->nullable();
+            $table->float('gst')->nullable();
+            $table->float('total')->nullable();
+        });
+
+        Schema::create('order_extra_fees', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('order_id');
+            $table->string('name');
+            $table->float('amount')->nullable();
+            $table->integer('percent')->nullable();
+            $table->float('total');
+        });
+
+        Schema::create('order_products', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('order_id');
+            $table->integer('product_id');
+            $table->integer('quantity');
+            $table->float('price');
+            $table->float('total');
+        });
+
+        Schema::create('order_product_variations', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('product_order_id');
+            $table->integer('product_id');
+            $table->integer('variation_id');
+            $table->integer('variation_value_id');
+        });
+
     }
 
     /**
@@ -97,5 +151,9 @@ class CreateProductManagerTable extends Migration
         Schema::dropIfExists('product_product_variation_type');
         Schema::dropIfExists('product_product_variation_type_value');
         Schema::dropIfExists('delivery_zones');
+        Schema::dropIfExists('orders');
+        Schema::dropIfExists('order_extra_fees');
+        Schema::dropIfExists('order_products');
+        Schema::dropIfExists('order_product_variations');
     }
 }

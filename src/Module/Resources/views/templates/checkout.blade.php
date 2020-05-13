@@ -1,27 +1,25 @@
-<div id="product-manager">
-  @if(cart()->get()->items->count())
-    @if ($page->form_id)
-      @php
-        $cart = cart()->get();
-        $defaultFields = [];
-        // todo: update this so the field ids are correct
-        if($cart->delivery && $cart->delivery->postcode) {
-            $defaultFields['cart__field--postcode'] = $cart->delivery->postcode;
-        }
-      @endphp
-      {!!
-        forms()
-          ->form($page->form_id)
-          ->setDefaultFields($defaultFields)
-          ->render()
-      !!}
-    @else
-      NO FORM SELECTED
-    @endif
+@if(cart()->get()->items->count())
+  @if ($page->form_id)
+    @php
+      $cart = cart()->get();
+      $defaultFields = [];
+      // todo: update this so the field ids are correct
+      if($cart->delivery && $cart->delivery->postcode) {
+          $defaultFields['cart__field--postcode'] = $cart->delivery->postcode;
+      }
+    @endphp
+    {!!
+      forms()
+        ->form($page->form_id)
+        ->setDefaultFields($defaultFields)
+        ->render()
+    !!}
   @else
-    Your cart is currently empty.
+    NO FORM SELECTED
   @endif
-</div>
+@else
+  Your cart is currently empty.
+@endif
 
 @section('scripts')
   <script src="{{ asset('vendor/refined/product-manager/js/app.js') }}"></script>

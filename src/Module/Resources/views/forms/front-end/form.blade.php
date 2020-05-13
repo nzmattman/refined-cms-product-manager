@@ -6,12 +6,15 @@
       @include('formBuilder::front-end.includes.fields')
     </div>
     <div class="cart__mini-cart">
-      <mini-cart
-        :cart="{{ json_encode(cart()->get()) }}"
-        :config="{{ json_encode(config('products')) }}"
-        :shipping="{{ json_encode(products()->getDeliveryZones()) }}"
-        path="{{ request()->path() }}"
-      ></mini-cart>
+
+      <div id="product-manager">
+        <mini-cart
+          :cart="{{ json_encode(cart()->get()) }}"
+          :config="{{ json_encode(config('products')) }}"
+          :shipping="{{ json_encode(products()->getDeliveryZones()) }}"
+          path="{{ request()->path() }}"
+        ></mini-cart>
+      </div>
 
       @include('formBuilder::front-end.includes.payment-gateways')
       @include('formBuilder::front-end.includes.captcha')

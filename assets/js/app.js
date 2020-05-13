@@ -4073,7 +4073,7 @@ var render = function() {
                     ])
                   : _vm._e(),
                 _vm._v(" "),
-                _vm.cart.extra_fees
+                _vm.cart.extra_fees.length
                   ? _vm._l(_vm.cart.extra_fees, function(fee) {
                       return _c("tr", [
                         _c(
@@ -4411,7 +4411,7 @@ var render = function() {
                     ])
                   : _vm._e(),
                 _vm._v(" "),
-                _vm.cart.extra_fees
+                _vm.cart.extra_fees.length
                   ? _vm._l(_vm.cart.extra_fees, function(fee) {
                       return _c("tr", [
                         _c("td", { staticClass: "cart__cell" }, [
@@ -17240,8 +17240,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /srv/dev.com/refineddigital/product-manager/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /srv/dev.com/refineddigital/product-manager/resources/sass/cart.scss */"./resources/sass/cart.scss");
+__webpack_require__(/*! /Users/matthias/Web/dev/product-manager/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /Users/matthias/Web/dev/product-manager/resources/sass/cart.scss */"./resources/sass/cart.scss");
 
 
 /***/ })

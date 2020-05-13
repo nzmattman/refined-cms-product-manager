@@ -99,6 +99,8 @@ class CartRepository {
         $cart->delivery = $delivery;
 
         session()->put($this->sessionKey, $cart);
+
+        $this->updateTotals();
     }
 
     private function update($item)
