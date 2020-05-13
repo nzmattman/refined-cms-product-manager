@@ -120,4 +120,42 @@
     display: flex;
     justify-content: space-between;
   }
+
+
+  &-form__overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 9000;
+    display: none;
+
+    &--active {
+      display: block;
+    }
+
+    .cart-form__spin-icon {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9001;
+    }
+    svg {
+      height: 30px;
+      animation: cartSpin 2s linear infinite;
+      color: #fff;
+    }
+  }
+}
+
+@keyframes cartSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(1turn);
+  }
 }

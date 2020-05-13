@@ -106,27 +106,41 @@
 
       remove(item) {
         if (confirm('Are you sure you want to remove this item?')) {
-          axios.delete(`refined/products/${item.product.id}/cart/${item.key}`)
+          axios
+            .delete(`refined/products/${item.product.id}/cart/${item.key}`)
             .then(() => {
-              const index = this.items.indexOf(item);
-              if (index > -1) {
-                this.items.splice(index, 1);
-                this.updateTotals();
-              }
+              this.removeItem(item);
             });
         }
+      },
 
+      removeItem(item) {
+        const index = this.items.indexOf(item);
+        if (index > -1) {
+          this.items.splice(index, 1);
+          this.updateTotals();
+        }
       },
 
       updateTotal(item) {
+        if (item.quantity < 1 && !confirm('A 0 quantity will remove this item, are you sure you want too do this?')) {
+          // todo: one day workout how to get the original value
+          item.quantity = 1;
+        }
+
         item.total = item.price * parseInt(item.quantity, 10);
 
-        axios.put(`refined/products/${item.product.id}/cart/update-quantity`, {
-          quantity: item.quantity,
-          key: item.key
+        axios
+          .put(`refined/products/${item.product.id}/cart/update-quantity`, {
+            quantity: item.quantity,
+            key: item.key
+          })
+          .then((response) => {
+            if (item.quantity < 1) {
+              this.removeItem(item);
+            }
+            this.updateTotals();
         });
-
-        this.updateTotals();
       },
 
       updateTotals() {

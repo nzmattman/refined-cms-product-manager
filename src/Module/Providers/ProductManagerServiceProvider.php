@@ -19,7 +19,7 @@ class ProductManagerServiceProvider extends ServiceProvider
     public function boot()
     {
         view()->addNamespace('products', [
-            base_path('resources/views/forms'),
+            base_path('resources/views/products'),
             __DIR__.'/../Resources/views',
         ]);
 

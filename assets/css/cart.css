@@ -89,3 +89,47 @@
   display: flex;
   justify-content: space-between;
 }
+.cart-form__overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9000;
+  display: none;
+}
+.cart-form__overlay--active {
+  display: block;
+}
+.cart-form__overlay .cart-form__spin-icon {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9001;
+}
+.cart-form__overlay svg {
+  height: 30px;
+  -webkit-animation: cartSpin 2s linear infinite;
+          animation: cartSpin 2s linear infinite;
+  color: #fff;
+}
+
+@-webkit-keyframes cartSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes cartSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(1turn);
+  }
+}

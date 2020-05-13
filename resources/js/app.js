@@ -31,7 +31,7 @@ Vue.component('cart', Cart);
 Vue.component('mini-cart', MiniCart);
 
 Vue.filter('toCurrency', value => {
-  return new Intl.NumberFormat('en-US', {minimumFractionDigits: 2}).format(value || 0)
+  return new Intl.NumberFormat('en-US', {minimumFractionDigits: 2}).format(value ? value.toFixed(2) : 0)
 });
 
 import numeral from 'numeral';
@@ -66,12 +66,13 @@ export const productManager = new Vue({
         cart.extra_fees.forEach(fee => {
           let feeTotal = 0;
           if (fee.percent) {
-            const rate = fee / 100;
-            feeTotal = numeral(totals.value()).multiply(rate).value();
+            const rate = numeral(fee.percent).divide(100).value();
+            const subTotal = total.clone().value();
+            feeTotal = numeral(subTotal).multiply(rate).value();
           }
 
-          if (fee.amount) {
-            feeTotal = fee.amount;
+          if (fee.value) {
+            feeTotal = fee.value;
           }
 
           fee.total = feeTotal;
@@ -82,7 +83,8 @@ export const productManager = new Vue({
 
       if (config.orders.gst.active) {
         const rate = numeral(config.orders.gst.percent).divide(100).value();
-        const gst = numeral(total.value()).multiply(rate).value();
+        const subTotal = total.clone().value();
+        const gst = numeral(subTotal).multiply(rate).value();
         newTotals.gst = gst;
 
         if (config.orders.gst.type === 'ex') {

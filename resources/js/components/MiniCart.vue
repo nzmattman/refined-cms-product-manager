@@ -54,8 +54,7 @@
           </tr>
           <template v-if="cart.extra_fees">
             <tr v-for="fee of cart.extra_fees">
-              <td class="cart__cell cart__cell--right cart__cell--no-border" colspan="4">&nbsp;</td>
-              <td class="cart__cell cart__cell--right"><strong>{{ fee.name }}: </strong></td>
+              <td class="cart__cell"><strong>{{ fee.name }}: </strong></td>
               <td class="cart__cell cart__cell--right">${{ fee.total | toCurrency }}</td>
             </tr>
           </template>

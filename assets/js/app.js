@@ -2033,23 +2033,37 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
       if (confirm('Are you sure you want to remove this item?')) {
         axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("refined/products/".concat(item.product.id, "/cart/").concat(item.key)).then(function () {
-          var index = _this.items.indexOf(item);
-
-          if (index > -1) {
-            _this.items.splice(index, 1);
-
-            _this.updateTotals();
-          }
+          _this.removeItem(item);
         });
       }
     },
+    removeItem: function removeItem(item) {
+      var index = this.items.indexOf(item);
+
+      if (index > -1) {
+        this.items.splice(index, 1);
+        this.updateTotals();
+      }
+    },
     updateTotal: function updateTotal(item) {
+      var _this2 = this;
+
+      if (item.quantity < 1 && !confirm('A 0 quantity will remove this item, are you sure you want too do this?')) {
+        // todo: one day workout how to get the original value
+        item.quantity = 1;
+      }
+
       item.total = item.price * parseInt(item.quantity, 10);
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.put("refined/products/".concat(item.product.id, "/cart/update-quantity"), {
         quantity: item.quantity,
         key: item.key
+      }).then(function (response) {
+        if (item.quantity < 1) {
+          _this2.removeItem(item);
+        }
+
+        _this2.updateTotals();
       });
-      this.updateTotals();
     },
     updateTotals: function updateTotals() {
       this.totals = _app__WEBPACK_IMPORTED_MODULE_1__["productManager"].updateTotals(this.items, this.totals, this.cart, this.config);
@@ -2087,7 +2101,6 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-//
 //
 //
 //
@@ -4401,21 +4414,9 @@ var render = function() {
                 _vm.cart.extra_fees
                   ? _vm._l(_vm.cart.extra_fees, function(fee) {
                       return _c("tr", [
-                        _c(
-                          "td",
-                          {
-                            staticClass:
-                              "cart__cell cart__cell--right cart__cell--no-border",
-                            attrs: { colspan: "4" }
-                          },
-                          [_vm._v(" ")]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "td",
-                          { staticClass: "cart__cell cart__cell--right" },
-                          [_c("strong", [_vm._v(_vm._s(fee.name) + ": ")])]
-                        ),
+                        _c("td", { staticClass: "cart__cell" }, [
+                          _c("strong", [_vm._v(_vm._s(fee.name) + ": ")])
+                        ]),
                         _vm._v(" "),
                         _c(
                           "td",
@@ -16866,7 +16867,7 @@ Vue.component('mini-cart', _components_MiniCart__WEBPACK_IMPORTED_MODULE_3__["de
 Vue.filter('toCurrency', function (value) {
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2
-  }).format(value || 0);
+  }).format(value ? value.toFixed(2) : 0);
 });
 
 var productManager = new Vue({
@@ -16898,12 +16899,15 @@ var productManager = new Vue({
           var feeTotal = 0;
 
           if (fee.percent) {
-            var rate = fee / 100;
-            feeTotal = numeral__WEBPACK_IMPORTED_MODULE_4___default()(totals.value()).multiply(rate).value();
+            var rate = numeral__WEBPACK_IMPORTED_MODULE_4___default()(fee.percent).divide(100).value();
+
+            var _subTotal = total.clone().value();
+
+            feeTotal = numeral__WEBPACK_IMPORTED_MODULE_4___default()(_subTotal).multiply(rate).value();
           }
 
-          if (fee.amount) {
-            feeTotal = fee.amount;
+          if (fee.value) {
+            feeTotal = fee.value;
           }
 
           fee.total = feeTotal;
@@ -16913,7 +16917,10 @@ var productManager = new Vue({
 
       if (config.orders.gst.active) {
         var rate = numeral__WEBPACK_IMPORTED_MODULE_4___default()(config.orders.gst.percent).divide(100).value();
-        var gst = numeral__WEBPACK_IMPORTED_MODULE_4___default()(total.value()).multiply(rate).value();
+
+        var _subTotal2 = total.clone().value();
+
+        var gst = numeral__WEBPACK_IMPORTED_MODULE_4___default()(_subTotal2).multiply(rate).value();
         newTotals.gst = gst;
 
         if (config.orders.gst.type === 'ex') {
@@ -17233,8 +17240,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/matthias/Web/dev/product-manager/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Users/matthias/Web/dev/product-manager/resources/sass/cart.scss */"./resources/sass/cart.scss");
+__webpack_require__(/*! /srv/dev.com/refineddigital/product-manager/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /srv/dev.com/refineddigital/product-manager/resources/sass/cart.scss */"./resources/sass/cart.scss");
 
 
 /***/ })

@@ -10,19 +10,19 @@ class CartRepository {
     {
         $cart = session()->get('cart');
         if (!$cart) {
-            $cart            = new \stdClass();
-            $cart->items     = collect([]);
-            $cart->discount  = null; // name of discount applied
-            $cart->delivery  = null; // name of delivery applied
-            $cart->extra_fees = [];
-            $cart->totals    = new \stdClass();
+            $cart               = new \stdClass();
+            $cart->items        = collect([]);
+            $cart->discount     = null; // name of discount applied
+            $cart->delivery     = null; // name of delivery applied
+            $cart->extra_fees   = [];
+            $cart->totals       = new \stdClass();
 
-            $cart->totals->discount  = 0;
-            $cart->totals->sub_total = 0;
-            $cart->totals->delivery  = 0;
-            $cart->totals->extra_fees  = 0;
-            $cart->totals->gst       = 0;
-            $cart->totals->total     = 0;
+            $cart->totals->discount     = 0;
+            $cart->totals->sub_total    = 0;
+            $cart->totals->delivery     = 0;
+            $cart->totals->extra_fees   = 0;
+            $cart->totals->gst          = 0;
+            $cart->totals->total        = 0;
 
             session()->put($this->sessionKey, $cart);
         }
@@ -80,10 +80,14 @@ class CartRepository {
     public function updateQuantity($request)
     {
         $itemKey = $request->get('key');
-        $item = $this->getItemByKey($itemKey);
-        $item->quantity = $request->get('quantity') ?: 1;
 
-        $this->update($item);
+        if ($request->get('quantity') < 1) {
+            $this->remove($itemKey);
+        } else {
+            $item = $this->getItemByKey($itemKey);
+            $item->quantity = $request->get('quantity') ?: 1;
+            $this->update($item);
+        }
     }
 
     public function setDeliveryZone($zone, $postcode)
@@ -233,25 +237,26 @@ class CartRepository {
         // add any additional fees.. if set
         $cartConfig = config('products.cart');
         if (isset($cartConfig['extra_fees']) && is_array($cartConfig['extra_fees'])) {
+            $cart->extra_fees = [];
+            $cart->totals->extra_fees = 0;
             foreach ($cartConfig['extra_fees'] as $fee) {
                 if (isset($fee['percent'])) {
                     $rate = $fee['percent'] / 100;
-                    $total = $totals * $rate;
+                    $rateTotal = $totals * $rate;
                 }
 
                 if (isset($fee['value'])) {
-                    $total = $fee['value'];
+                    $rateTotal = $fee['value'];
                 }
 
-                $fee['total'] = $total;
+                $fee['total'] = $rateTotal;
                 $cart->extra_fees[] = $fee;
 
-                $totals += $total;
-
-                $cart->totals->extra_fee += $total;
+                $cart->totals->extra_fees += $rateTotal;
             }
-        }
 
+            $totals += $cart->totals->extra_fees;
+        }
 
         // add the gst
         $orderConfig = config('products.orders');
