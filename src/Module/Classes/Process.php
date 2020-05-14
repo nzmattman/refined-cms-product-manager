@@ -31,8 +31,8 @@ class Process implements FormBuilderCallbackInterface {
         $emailData->request = $emailRepo->setDataForDB($request);
         $emailData->cart = $cart;
         // remove any cc details
-        if (isset($emailData->request->data['c'])) {
-            unset($emailData->request->data['c']);
+        if (isset($emailData->request['c'])) {
+            unset($emailData->request['c']);
         }
 
         // todo: off site varification stuff
@@ -51,8 +51,6 @@ class Process implements FormBuilderCallbackInterface {
                 ->setTypeId($order->id)
                 ->setTypeDetails(get_class($order))
                 ->process($request, $form, $emailData);
-
-            exit();
 
             if (!$response->success) {
                 $validator = \Validator::make(

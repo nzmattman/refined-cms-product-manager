@@ -16,7 +16,8 @@ return [
             'percent' => 10,
             'type' => 'inc' // inc or ex
         ],
-        'currency' => 'AUD'
+        'currency' => 'AUD',
+        'country_code' => 'AU'
     ],
 
     'cart' => [
