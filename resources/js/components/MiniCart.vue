@@ -41,14 +41,18 @@
             <td class="cart__cell" colspan="2">
               <div><strong>Delivery: </strong></div>
               <div class="cart__delivery-zone" v-for="zone of deliveryOptions">
-                <span class="cart__delivery-zone-name">
-                  <input type="radio" name="deliveryZone" :id="`delivery_zone_${zone.id}`" :checked="zone.isChecked" @change="setDelivery(zone)"/>
-                  <label :for="`delivery_zone_${zone.id}`">{{ zone.name }}:</label>
-                </span>
-                <span class="cart__delivery-zone-price">
-                  <template v-if="zone.price">${{ zone.price | toCurrency }}</template>
-                  <template v-else>Free</template>
-                </span>
+                <div>
+                  <span class="cart__delivery-zone-name">
+                    <input type="radio" name="deliveryZone" :id="`delivery_zone_${zone.id}`" :value="zone.id" :checked="zone.isChecked" @change="setDelivery(zone)"/>
+                    <label :for="`delivery_zone_${zone.id}`">{{ zone.name }}:</label>
+                  </span>
+                  <span class="cart__delivery-zone-price">
+                    <template v-if="zone.price">${{ zone.price | toCurrency }}</template>
+                    <template v-else>Free</template>
+                  </span>
+                </div>
+                <p class="cart__delivery-zone-note" v-if="zone.notes_as_html" v-html="zone.notes_as_html"></p>
+                <p class="cart__delivery-zone-days" v-if="zone.available" v-html="zone.available"></p>
               </div>
             </td>
           </tr>

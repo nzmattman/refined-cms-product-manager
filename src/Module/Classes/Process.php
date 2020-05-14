@@ -15,6 +15,11 @@ class Process implements FormBuilderCallbackInterface {
         $cart = cart()->get();
         $gateway = paymentGateways()->get($request->get('payment_gateway'));
 
+        $emailRepo = new EmailRepository();
+        $billingDetails = '<h3>Billing Details</h3>'.$emailRepo->generateHtml($request, $form, 'margin: 0 auto');
+
+        $orderDetails = '<h3>Order Details</h3>'.view()->make('products::emails.elements.cart')->with(compact('cart'))->render();
+
         $formBuilderRepository = new FormBuilderRepository();
         $formRepo = new FormsRepository($formBuilderRepository);
         $fieldsByName = $formRepo->formatFieldsByName($request, $form);
@@ -22,10 +27,68 @@ class Process implements FormBuilderCallbackInterface {
         $orderRepo = new OrderRepository();
         $order = $orderRepo->create($fieldsByName, $cart, $request->get('payment_gateway'));
 
-        $emailRepo = new EmailRepository();
-        $billingDetails = '<h3>Billing Details</h3>'.$emailRepo->generateHtml($request, $form, 'margin: 0 auto');
+        $emailData = new \stdClass();
+        $emailData->request = $emailRepo->setDataForDB($request);
+        $emailData->cart = $cart;
+        // remove any cc details
+        if (isset($emailData->request->data['c'])) {
+            unset($emailData->request->data['c']);
+        }
 
-        $orderDetails = '<h3>Order Details</h3>'.view()->make('products::emails.elements.cart')->with(compact('cart'))->render();
+        // todo: off site varification stuff
+        if ($gateway) {
+
+            $response = $gateway
+                ->setTotal($cart->totals->total)
+                ->setDescription('Order #'.str_pad($order->id, 4, 0, STR_PAD_LEFT))
+                ->setMetaData([
+                    'name' => $fieldsByName->{'First Name'}.' '.$fieldsByName->{'Last Name'},
+                    'address' => implode(', ', $gateway->formatAddress($fieldsByName)),
+                    'phone' => $fieldsByName->Phone,
+                    'email' => $fieldsByName->Email,
+                ])
+                ->setCurrency(config('products.orders.currency'))
+                ->setTypeId($order->id)
+                ->setTypeDetails(get_class($order))
+                ->process($request, $form, $emailData);
+
+            if (!$response->success) {
+                $validator = \Validator::make(
+                    ['check' => ''],
+                    ['check' => 'required'],
+                    ['check.required' => $response->message]
+                );
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->withErrors($validator)
+                    ->with('error', true);
+            }
+        }
+
+        // send the receipt email
+        $this->sendEmail($orderDetails, $billingDetails, $order, $fieldsByName, $request, $form, $emailData, 'receipt_');
+
+        // send the admin email
+        $this->sendEmail($orderDetails, $billingDetails, $order, $fieldsByName, $request, $form, $emailData);
+
+        session()->flash('content', [
+            'search' => [
+                '[[order_details]]',
+                '[[billing_details]]'
+            ],
+            'replace' => [
+                $orderDetails,
+                $billingDetails
+            ]
+        ]);
+
+        cart()->clear();
+    }
+
+    private function sendEmail($orderDetails, $billingDetails, $order, $fields, $request, $form, $emailData, $key = '')
+    {
+        $emailRepo = new EmailRepository();
 
         $search = [
             '[[first_name]]',
@@ -35,26 +98,21 @@ class Process implements FormBuilderCallbackInterface {
             '[[billing_details]]'
         ];
         $replace = [
-            isset($fieldsByName->{'First Name'}) ? $fieldsByName->{'First Name'} : '',
-            isset($fieldsByName->{'Last Name'}) ? $fieldsByName->{'Last Name'} : '',
-            '',
+            isset($fields->{'First Name'}) ? $fields->{'First Name'} : '',
+            isset($fields->{'Last Name'}) ? $fields->{'Last Name'} : '',
+            isset($order->id) ? str_pad($order->id, 4, 0, STR_PAD_LEFT) : null,
             $orderDetails,
-            $billingDetails
+            $billingDetails.'<p>&nbsp;</p>'
         ];
 
-        $html = str_replace($search, $replace, $form->message);
+        $html = str_replace($search, $replace, $form->{$key.'message'});
+        $subject = str_replace($search, $replace, $form->{$key.'subject'});
 
-        help()->trace($gateway);
-
-        if ($gateway) {
-            help()->trace('process the payment');
-        }
-
-        help()->trace($html);;
-
-        help()->trace($request->all());
-        help()->trace($form->toArray());
-
-        exit();
+        $settings = $emailRepo->settingsFromForm($form, $request);
+        $settings->body = $html;
+        $settings->form_id = $form->id;
+        $settings->data = $emailData;
+        $settings->subject = $subject;
+        $emailRepo->send($settings);
     }
 }

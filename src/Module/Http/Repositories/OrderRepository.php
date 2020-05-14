@@ -6,20 +6,23 @@ use Carbon\Carbon;
 use RefinedDigital\ProductManager\Module\Models\Order;
 use RefinedDigital\ProductManager\Module\Models\OrderExtraFee;
 use RefinedDigital\ProductManager\Module\Models\OrderProduct;
-use RefinedDigital\ProductManager\Module\Models\OrderProductValue;
+use RefinedDigital\ProductManager\Module\Models\OrderProductVariation;
 
 class OrderRepository {
 
     public function create($fields, $cart, $paymentMethod)
     {
-        help()->trace($fields);
-
         $orderFields = [
+            'order_status_id' => 1, // processing
             'paid_at' => Carbon::now(),
             'payment_method' => $paymentMethod
         ];
         foreach($fields as $key => $field) {
-            $orderFields[snake_case($key)] = $field;
+            $fieldKey = snake_case($key);
+            if ($fieldKey === 'address2') {
+                $fieldKey = 'address_2';
+            }
+            $orderFields[$fieldKey] = $field;
         }
 
         if ($cart->delivery && $cart->delivery->zone) {
@@ -58,11 +61,6 @@ class OrderRepository {
 
         $this->addProducts($order->id, $cart->items);
 
-        help()->trace($orderFields);
-        help()->trace($cart);
-
-        exit();
-
         return $order;
     }
 
@@ -73,7 +71,7 @@ class OrderRepository {
                 $fields = [
                     'order_id' => $orderId,
                     'name' => $fee['name'],
-                    'amount' => isset($fee['amount']) ? $fee['name'] : null,
+                    'value' => isset($fee['value']) ? $fee['value'] : null,
                     'percent' => isset($fee['percent']) ? $fee['percent'] : null,
                     'total' => $fee['total'],
                 ];
@@ -85,7 +83,26 @@ class OrderRepository {
     public function addProducts($orderId, $products)
     {
         // add the product
-         // add the variation
-          // add the values
+        if ($products->count()) {
+            foreach ($products as $item) {
+                $orderProduct = OrderProduct::create([
+                    'order_id' => $orderId,
+                    'product_id' => $item->product->id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                    'total' => $item->total
+                ]);
+
+                if (isset($item->variations) && is_array($item->variations) && sizeof($item->variations)) {
+                    foreach ($item->variations as $variation) {
+                        OrderProductVariation::create([
+                            'order_product_id' => $orderProduct->id,
+                            'variation_id' => $variation->id,
+                            'variation_value_id' => $variation->value_id,
+                        ]);
+                    }
+                }
+            }
+        }
     }
 }

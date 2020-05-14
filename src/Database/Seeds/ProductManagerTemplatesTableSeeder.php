@@ -32,6 +32,11 @@ class ProductManagerTemplatesTableSeeder extends Seeder
                 'active'    => 0,
             ],
             [
+                'name'      => 'Order Thank You',
+                'source'    => 'order-thank-you',
+                'active'    => 1,
+            ],
+            [
                 'name'      => 'Cart',
                 'source'    => 'cart',
                 'active'    => 1,

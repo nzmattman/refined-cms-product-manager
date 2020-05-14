@@ -4,13 +4,13 @@ namespace RefinedDigital\ProductManager\Module\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RefinedDigital\CMS\Modules\Core\Models\CoreModel;
-use Spatie\EloquentSortable\Sortable;
 
-class Order extends CoreModel implements Sortable
+class Order extends CoreModel
 {
     use SoftDeletes;
 
     protected $fillable = [
+        'order_status_id',
         'paid_at',
         'payment_method',
         'first_name',

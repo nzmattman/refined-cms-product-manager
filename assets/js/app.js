@@ -2176,6 +2176,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['cart', 'config', 'path', 'shipping'],
@@ -4355,53 +4359,80 @@ var render = function() {
                               "div",
                               { staticClass: "cart__delivery-zone" },
                               [
-                                _c(
-                                  "span",
-                                  { staticClass: "cart__delivery-zone-name" },
-                                  [
-                                    _c("input", {
-                                      attrs: {
-                                        type: "radio",
-                                        name: "deliveryZone",
-                                        id: "delivery_zone_" + zone.id
-                                      },
-                                      domProps: { checked: zone.isChecked },
-                                      on: {
-                                        change: function($event) {
-                                          return _vm.setDelivery(zone)
-                                        }
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c(
-                                      "label",
-                                      {
+                                _c("div", [
+                                  _c(
+                                    "span",
+                                    { staticClass: "cart__delivery-zone-name" },
+                                    [
+                                      _c("input", {
                                         attrs: {
-                                          for: "delivery_zone_" + zone.id
+                                          type: "radio",
+                                          name: "deliveryZone",
+                                          id: "delivery_zone_" + zone.id
+                                        },
+                                        domProps: {
+                                          value: zone.id,
+                                          checked: zone.isChecked
+                                        },
+                                        on: {
+                                          change: function($event) {
+                                            return _vm.setDelivery(zone)
+                                          }
                                         }
-                                      },
-                                      [_vm._v(_vm._s(zone.name) + ":")]
-                                    )
-                                  ]
-                                ),
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "label",
+                                        {
+                                          attrs: {
+                                            for: "delivery_zone_" + zone.id
+                                          }
+                                        },
+                                        [_vm._v(_vm._s(zone.name) + ":")]
+                                      )
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "span",
+                                    {
+                                      staticClass: "cart__delivery-zone-price"
+                                    },
+                                    [
+                                      zone.price
+                                        ? [
+                                            _vm._v(
+                                              "$" +
+                                                _vm._s(
+                                                  _vm._f("toCurrency")(
+                                                    zone.price
+                                                  )
+                                                )
+                                            )
+                                          ]
+                                        : [_vm._v("Free")]
+                                    ],
+                                    2
+                                  )
+                                ]),
                                 _vm._v(" "),
-                                _c(
-                                  "span",
-                                  { staticClass: "cart__delivery-zone-price" },
-                                  [
-                                    zone.price
-                                      ? [
-                                          _vm._v(
-                                            "$" +
-                                              _vm._s(
-                                                _vm._f("toCurrency")(zone.price)
-                                              )
-                                          )
-                                        ]
-                                      : [_vm._v("Free")]
-                                  ],
-                                  2
-                                )
+                                zone.notes_as_html
+                                  ? _c("p", {
+                                      staticClass: "cart__delivery-zone-note",
+                                      domProps: {
+                                        innerHTML: _vm._s(zone.notes_as_html)
+                                      }
+                                    })
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                zone.available
+                                  ? _c("p", {
+                                      staticClass: "cart__delivery-zone-days",
+                                      domProps: {
+                                        innerHTML: _vm._s(zone.available)
+                                      }
+                                    })
+                                  : _vm._e()
                               ]
                             )
                           })
@@ -17240,8 +17271,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/matthias/Web/dev/product-manager/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Users/matthias/Web/dev/product-manager/resources/sass/cart.scss */"./resources/sass/cart.scss");
+__webpack_require__(/*! /srv/dev.com/refineddigital/product-manager/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /srv/dev.com/refineddigital/product-manager/resources/sass/cart.scss */"./resources/sass/cart.scss");
 
 
 /***/ })
