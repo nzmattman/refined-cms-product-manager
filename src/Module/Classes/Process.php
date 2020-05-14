@@ -52,6 +52,8 @@ class Process implements FormBuilderCallbackInterface {
                 ->setTypeDetails(get_class($order))
                 ->process($request, $form, $emailData);
 
+            exit();
+
             if (!$response->success) {
                 $validator = \Validator::make(
                     ['check' => ''],
@@ -65,6 +67,8 @@ class Process implements FormBuilderCallbackInterface {
                     ->with('error', true);
             }
         }
+
+        exit();
 
         // send the receipt email
         $this->sendEmail($orderDetails, $billingDetails, $order, $fieldsByName, $request, $form, $emailData, 'receipt_');
