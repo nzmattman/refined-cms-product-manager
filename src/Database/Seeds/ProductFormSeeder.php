@@ -5,7 +5,7 @@ namespace RefinedDigital\ProductManager\Database\Seeds;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
 use DB;
-use RefinedDigital\FormBuilder\Module\Fields\FormField;
+use RefinedDigital\FormBuilder\Module\Models\FormField;
 use RefinedDigital\FormBuilder\Module\Models\Form;
 use RefinedDigital\FormBuilder\Module\Models\FormFieldOption;
 
@@ -48,49 +48,49 @@ class ProductFormSeeder extends Seeder
             [
                 'form_field_type_id' => 1,
                 'name' => 'First Name',
-                'required' => 1,
+                'required' => true,
                 'note' => null,
                 'custom_class' => 'cart__field--first-name',
             ],
             [
                 'form_field_type_id' => 1,
                 'name' => 'Last Name',
-                'required' => 1,
+                'required' => true,
                 'note' => null,
                 'custom_class' => 'cart__field--last-name',
             ],
             [
                 'form_field_type_id' => 1,
                 'name' => 'Company Name',
-                'required' => 0,
+                'required' => false,
                 'note' => null,
                 'custom_class' => 'cart__field--company-name',
             ],
             [
                 'form_field_type_id' => 1,
                 'name' => 'Address',
-                'required' => 1,
+                'required' => true,
                 'note' => null,
                 'custom_class' => 'cart__field--address',
             ],
             [
                 'form_field_type_id' => 1,
                 'name' => 'Address 2',
-                'required' => 0,
+                'required' => false,
                 'note' => null,
                 'custom_class' => 'cart__field--address-2',
             ],
             [
                 'form_field_type_id' => 1,
                 'name' => 'Suburb',
-                'required' => 1,
+                'required' => true,
                 'note' => null,
                 'custom_class' => 'cart__field--suburb',
             ],
             [
                 'form_field_type_id' => 3,
                 'name' => 'State',
-                'required' => 1,
+                'required' => true,
                 'note' => null,
                 'custom_class' => 'cart__field--state',
                 'options' => [
@@ -107,28 +107,28 @@ class ProductFormSeeder extends Seeder
             [
                 'form_field_type_id' => 7,
                 'name' => 'Postcode',
-                'required' => 1,
+                'required' => true,
                 'note' => null,
                 'custom_class' => 'cart__field--postcode',
             ],
             [
                 'form_field_type_id' => 9,
                 'name' => 'Phone',
-                'required' => 1,
+                'required' => true,
                 'note' => null,
                 'custom_class' => 'cart__field--phone',
             ],
             [
                 'form_field_type_id' => 8,
                 'name' => 'Email',
-                'required' => 1,
+                'required' => true,
                 'note' => null,
                 'custom_class' => 'cart__field--email',
             ],
             [
                 'form_field_type_id' => 2,
                 'name' => 'Additional Information',
-                'required' => 0,
+                'required' => false,
                 'note' => 'Order notes',
                 'custom_class' => 'cart__field--additional-information',
             ],
@@ -140,7 +140,6 @@ class ProductFormSeeder extends Seeder
                 'active' => true,
                 'show_label' => true,
                 'position' => $pos,
-                'required' => null,
                 'placeholder' => null,
                 'data' => null,
                 'custom_field_class' => null,
@@ -151,7 +150,7 @@ class ProductFormSeeder extends Seeder
 
             $insert = array_merge($field, $data);
             $options = null;
-            if ($insert['options']) {
+            if (isset($insert['options'])) {
                 $options = $insert['options'];
                 unset($insert['options']);
             }

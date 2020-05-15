@@ -24,7 +24,7 @@ class CreateOrderTables extends Migration
             $table->integer('position');
             $table->string('name');
             $table->string('email_subject')->nullable();
-            $table->string('email_content')->nullable();
+            $table->longText('email_content')->nullable();
             $table->string('sms_content')->nullable();
         });
 

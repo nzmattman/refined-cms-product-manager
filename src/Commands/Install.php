@@ -84,7 +84,7 @@ class Install extends Command
     {
         if (isset($template->id)) {
             // override the template id of the team details
-            $configFile = config_path('product-manager.php');
+            $configFile = config_path('products.php');
             $file = file_get_contents($configFile);
             $search = [ "'".$key."'" ];
             $replace = [ $template->id ];
@@ -94,37 +94,51 @@ class Install extends Command
 
     protected function createSymLink()
     {
-        $link = getcwd().'/public/vendor/';
-        $target = '../../vendor/refineddigital/cms-product-manager/assets/';
+        $this->output->writeln('<info>Creating Symlink</info>');
+        try {
+            $link = getcwd().'/public/vendor/';
+            $target = '../../../vendor/refineddigital/cms-product-manager/assets/';
 
-        // create the directories
-        if (!is_dir($link)) {
-            mkdir($link);
+            // create the directories
+            if (!is_dir($link)) {
+                mkdir($link);
+            }
+            $link .= 'refined/';
+            if (!is_dir($link)) {
+                mkdir($link);
+            }
+            $link .= 'product-manager';
+
+            if (! windows_os()) {
+                return symlink($target, $link);
+            }
+
+            $mode = is_dir($target) ? 'J' : 'H';
+
+            exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
+        } catch(\Exception $e) {
+            $this->output->writeln('<error>Failed to install symlink</error>');
         }
-        $link .= 'refined/';
-        if (!is_dir($link)) {
-            mkdir($link);
-        }
-        $link .= 'product-manager';
-
-        if (! windows_os()) {
-            return symlink($target, $link);
-        }
-
-        $mode = is_dir($target) ? 'J' : 'H';
-
-        exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
     }
 
     private function copyTemplates()
     {
-        $dir = '../Module/Resources/views/cms-templates';
+        $this->output->writeln('<info>Copying Templates</info>');
+        $dir = __DIR__.'/defaults/views/templates/';
         $templates = scandir($dir);
         array_shift($templates);array_shift($templates);
+
+        if (!is_dir(resource_path('views/templates'))) {
+            mkdir(resource_path('views/templates'));
+        }
         if (sizeof($templates)) {
-            foreach ($templates as $template) {
-                $contents = file_get_contents($dir.'/'.$template);
-                file_put_contents(resource_path('views/templates/'.$template), $contents);
+            try {
+                foreach ($templates as $template) {
+                    $contents = file_get_contents($dir.$template);
+                    file_put_contents(resource_path('views/templates/'.$template), $contents);
+                }
+            } catch(\Exception $e) {
+                $this->output->writeln('<error>Failed to copy all templates</error>');
             }
         }
     }
