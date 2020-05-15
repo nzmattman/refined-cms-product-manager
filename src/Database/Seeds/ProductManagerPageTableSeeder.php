@@ -8,6 +8,7 @@ use DB;
 use RefinedDigital\CMS\Modules\Core\Models\Uri;
 use RefinedDigital\CMS\Modules\Pages\Models\Page;
 use RefinedDigital\CMS\Modules\Pages\Models\PageHolder;
+use RefinedDigital\FormBuilder\Module\Models\Form;
 
 class ProductManagerPageTableSeeder extends Seeder
 {
@@ -36,6 +37,8 @@ class ProductManagerPageTableSeeder extends Seeder
             }
         }
 
+        $productForm = Form::whereName('Checkout')->get();
+
         $pages = [
             [
                 'page_holder_id' => $pageHolder->id,
@@ -56,8 +59,7 @@ class ProductManagerPageTableSeeder extends Seeder
                 'page_type' => 1,
                 'position' => 0,
                 'name' => 'Checkout',
-                // todo: add the form id
-                // 'form_id' => 0
+                'form_id' => isset($productForm->id) ? $productForm->id : null
             ],
             [
                 'page_holder_id' => $pageHolder->id,

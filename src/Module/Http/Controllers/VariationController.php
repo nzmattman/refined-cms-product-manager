@@ -30,7 +30,6 @@ class VariationController extends CoreController
 
         $table = new \stdClass();
         $table->fields = [
-            (object) [ 'name' => '#', 'field' => 'id', 'sortable' => true, 'classes' => ['data-table__cell--id']],
             (object) [ 'name' => 'Name', 'field' => 'name', 'sortable' => true],
             (object) [ 'name' => 'Display Name', 'field' => 'display_name', 'sortable' => true],
         ];

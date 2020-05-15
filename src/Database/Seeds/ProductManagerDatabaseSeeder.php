@@ -14,9 +14,10 @@ class ProductManagerDatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(OrderSeeder::class);
         $this->call(ProductManagerTemplatesTableSeeder::class);
         $this->call(ProductManagerPageTableSeeder::class);
-        $this->call(ProductManagerDatabaseSeeder::class);
-        $this->call(OrderSeeder::class);
+        $this->call(ProductFormSeeder::class);
+        $this->call(ProductStatusTableSeeder::class);
     }
 }

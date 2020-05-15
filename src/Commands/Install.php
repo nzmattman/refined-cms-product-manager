@@ -44,6 +44,7 @@ class Install extends Command
         $this->seed();
         $this->publish();
         $this->createSymLink();
+        $this->copyTemplates();
         $this->info('Product Manager has been successfully installed');
     }
 
@@ -100,7 +101,11 @@ class Install extends Command
         if (!is_dir($link)) {
             mkdir($link);
         }
-        $link .= 'refined/product-manager';
+        $link .= 'refined/';
+        if (!is_dir($link)) {
+            mkdir($link);
+        }
+        $link .= 'product-manager';
 
         if (! windows_os()) {
             return symlink($target, $link);
@@ -109,6 +114,19 @@ class Install extends Command
         $mode = is_dir($target) ? 'J' : 'H';
 
         exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
+    }
+
+    private function copyTemplates()
+    {
+        $dir = '../Module/Resources/views/cms-templates';
+        $templates = scandir($dir);
+        array_shift($templates);array_shift($templates);
+        if (sizeof($templates)) {
+            foreach ($templates as $template) {
+                $contents = file_get_contents($dir.'/'.$template);
+                file_put_contents(resource_path('views/templates/'.$template), $contents);
+            }
+        }
     }
 
 }

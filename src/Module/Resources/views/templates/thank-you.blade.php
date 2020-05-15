@@ -1,10 +1,8 @@
 @if (isset($page))
-  @php
-    if (session()->has('content')) {
-        $cont = session()->get('content');
-        echo str_replace($cont['search'], $cont['replace'], $page->getContentBySource('content'));
-    } else {
-        echo $page->getContentBySource('content');
-    }
-  @endphp
+  @if (session()->has('content'))
+    @php $cont = session()->get('content'); @endphp
+    {!! str_replace($cont['search'], $cont['replace'], $page->getContentBySource('content')) !!}
+  @else
+    {!! $page->getContentBySource('content') !!}
+  @endif
 @endif

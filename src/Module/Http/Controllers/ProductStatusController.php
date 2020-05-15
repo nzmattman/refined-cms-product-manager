@@ -4,23 +4,23 @@ namespace RefinedDigital\ProductManager\Module\Http\Controllers;
 
 use Illuminate\Http\Request;
 use RefinedDigital\CMS\Modules\Core\Http\Controllers\CoreController;
-use RefinedDigital\ProductManager\Module\Http\Requests\DeliveryRequest;
-use RefinedDigital\ProductManager\Module\Http\Repositories\DeliveryRepository;
+use RefinedDigital\ProductManager\Module\Http\Requests\ProductStatusRequest;
+use RefinedDigital\ProductManager\Module\Http\Repositories\ProductStatusRepository;
 use RefinedDigital\CMS\Modules\Core\Http\Repositories\CoreRepository;
 
-class DeliveryController extends CoreController
+class ProductStatusController extends CoreController
 {
-    protected $model = 'RefinedDigital\ProductManager\Module\Models\DeliveryZone';
-    protected $prefix = 'products::delivery';
-    protected $route = 'delivery-zones';
-    protected $heading = 'Delivery Zones';
-    protected $button = 'a Zone';
+    protected $model = 'RefinedDigital\ProductManager\Module\Models\ProductStatus';
+    protected $prefix = 'products::productStatus';
+    protected $route = 'product-statuses';
+    protected $heading = 'Product Status ';
+    protected $button = 'a Status';
 
-    protected $deliveryRepository;
+    protected $productStatusRepository;
 
     public function __construct(CoreRepository $coreRepository)
     {
-        $this->deliveryRepository = new DeliveryRepository();
+        $this->productStatusRepository = new ProductStatusRepository();
 
         parent::__construct($coreRepository);
     }
@@ -30,11 +30,11 @@ class DeliveryController extends CoreController
         $table = new \stdClass();
         $table->fields = [
             (object) [ 'name' => 'Name', 'field' => 'name', 'sortable' => true],
-            (object) [ 'name' => 'Price', 'field' => 'price', 'type' => 'price', 'sortable' => true],
+            (object) [ 'name' => 'Active', 'field' => 'active', 'type'=> 'select', 'options' => [1 => 'Yes', 0 => 'No'], 'sortable' => true, 'classes' => ['data-table__cell--active']],
         ];
         $table->routes = (object) [
-            'edit'      => 'refined.delivery-zones.edit',
-            'destroy'   => 'refined.delivery-zones.destroy'
+            'edit'      => 'refined.product-statuses.edit',
+            'destroy'   => 'refined.product-statuses.destroy'
         ];
         $table->sortable = false;
 
@@ -62,7 +62,7 @@ class DeliveryController extends CoreController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function store(DeliveryRequest $request)
+    public function store(ProductStatusRequest $request)
     {
         return parent::storeRecord($request);
     }
@@ -74,7 +74,7 @@ class DeliveryController extends CoreController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(DeliveryRequest $request, $id)
+    public function update(ProductStatusRequest $request, $id)
     {
         return parent::updateRecord($request, $id);
     }

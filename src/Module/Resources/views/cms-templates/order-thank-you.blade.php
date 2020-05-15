@@ -2,10 +2,8 @@
 
 @section('template')
 
-
   <div class="holder">
-    <h1>Checkout</h1>
-    @include('products::templates.checkout')
+    @include('products::templates.thank-you')
   </div>
 
 @stop

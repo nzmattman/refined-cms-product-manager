@@ -1,3 +1,5 @@
+@include('products::templates.includes.message')
+
 @if(cart()->get()->items->count())
   @if ($page->form_id)
     @php

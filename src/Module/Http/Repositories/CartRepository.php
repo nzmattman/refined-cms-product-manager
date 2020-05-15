@@ -230,7 +230,7 @@ class CartRepository {
         }
 
         // add the shipping
-        if ($cart->delivery) {
+        if (config('products.orders.active') && $cart->delivery) {
             $delivery = $cart->delivery->zone->price;
             $totals += $delivery;
             $cart->totals->delivery = $delivery;

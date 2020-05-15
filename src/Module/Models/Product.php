@@ -32,6 +32,9 @@ class Product extends CoreModel implements Sortable
         'content',
         'price',
         'sale_price',
+        'hide_from_menu',
+        'for_sale',
+        'product_status_id',
     ];
 
     protected $casts = [
@@ -69,6 +72,11 @@ class Product extends CoreModel implements Sortable
                                     [ 'label' => 'Active', 'name' => 'active', 'required' => true, 'type' => 'select', 'options' => [1 => 'Yes', 0 => 'No'] ],
                                     [ 'label' => 'New', 'name' => 'new', 'required' => true, 'type' => 'select', 'options' => [0 => 'No', 1 => 'Yes'] ],
                                     [ 'label' => 'Featured', 'name' => 'featured_product', 'required' => true, 'type' => 'select', 'options' => [0 => 'No', 1 => 'Yes'] ],
+                                ],
+                                [
+                                    [ 'label' => 'For Sale', 'name' => 'for_sale', 'required' => true, 'type' => 'select', 'options' => [1 => 'Yes', 0 => 'No'] ],
+                                    [ 'label' => 'Hide on Product Page', 'name' => 'hide_from_menu', 'required' => true, 'type' => 'select', 'options' => [0 => 'No', 1 => 'Yes'] ],
+                                    [ 'label' => 'Status', 'name' => 'product_status_id', 'required' => true, 'type' => 'select', 'options' => [] ],
                                 ],
                                 [
                                     [ 'label' => 'Name', 'name' => 'name', 'required' => true, 'attrs' => ['v-model' => 'content.name', '@keyup' => 'updateSlug' ] ],
@@ -133,7 +141,8 @@ class Product extends CoreModel implements Sortable
                 [
                     [ 'label' => 'Files', 'name' => 'files', 'type' => 'repeatable', 'required' => false, 'hideLabel' => true, 'fields' =>
                         [
-                            [ 'name' => 'File', 'page_content_type_id' => 5, 'field' => 'file', 'hide_label' => false],
+                            [ 'name' => 'File', 'page_content_type_id' => 5, 'field' => 'file'],
+                            [ 'name' => 'Title', 'page_content_type_id' => 3, 'field' => 'file_title'],
                         ]
                     ],
                 ],
@@ -196,5 +205,18 @@ class Product extends CoreModel implements Sortable
     public function variation_types()
     {
         return $this->belongsToMany(ProductVariationType::class);
+    }
+
+	public function setFormFields()
+    {
+        $fields = $this->formFields;
+        $fields[0]['sections']['left']['blocks'][0]['fields'][1][2]['options'] = products()->getStatuses();
+
+        $config = config('products');
+        if (!$config['variations']['active']) {
+            unset($fields[3]);
+        }
+
+        return $fields;
     }
 }

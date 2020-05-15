@@ -107,7 +107,7 @@ class VariationRepository extends CoreRepository
 
         $initialKey = key($typeLookup);
 
-        $notAType = ['price','sale_price'];
+        $notAType = ['price','sale_price', 'product_status_id'];
         $dotArray = [];
 
         $rows = $product->variations->items;
@@ -124,6 +124,7 @@ class VariationRepository extends CoreRepository
                 $item = new \stdClass();
                 $item->price = $row['price']->content;
                 $item->sale_price = $row['sale_price']->content;
+                $item->product_status_id = isset($row['product_status_id']) ? $row['product_status_id']->content : null;
                 $dotArray[substr($key, 1)] = $item;
             }
 
@@ -179,7 +180,6 @@ class VariationRepository extends CoreRepository
 
     private function formatChildRow($array, $type, $typeNameLookup)
     {
-        // help()->trace($array);
         foreach ($array as $key => $values) {
             if (isset($type->optionLookup[$key])) {
                 $option = $type->optionLookup[$key];

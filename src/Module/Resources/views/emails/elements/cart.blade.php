@@ -95,8 +95,8 @@
           @foreach ($cart->extra_fees as $fee)
             <tr>
               <td valign="top" style="{!! $cellName !!}" width="100%">&nbsp;</td>
-              <td valign="top" style="{!! $cellTotal.$cell !!}" width="220px"><span style="font-size:16px"><strong>{{ $fee['name'] }}:</strong></span></td>
-              <td valign="top" style="{!! $cellPrice.$cell !!}" width="110px"><span style="font-size:16px">${{ number_format($fee['total'], 2) }}</span></td>
+              <td valign="top" style="{!! $cellTotal.$cell !!}" width="220px"><span style="font-size:16px"><strong>{{ $fee->name }}:</strong></span></td>
+              <td valign="top" style="{!! $cellPrice.$cell !!}" width="110px"><span style="font-size:16px">${{ number_format($fee->total, 2) }}</span></td>
             </tr>
           @endforeach
         @endif

@@ -4,24 +4,24 @@ namespace RefinedDigital\ProductManager\Module\Http\Controllers;
 
 use Illuminate\Http\Request;
 use RefinedDigital\CMS\Modules\Core\Http\Controllers\CoreController;
-use RefinedDigital\ProductManager\Module\Http\Requests\ProductRequest;
-use RefinedDigital\ProductManager\Module\Http\Repositories\ProductRepository;
+use RefinedDigital\ProductManager\Module\Http\Requests\OrderRequest;
+use RefinedDigital\ProductManager\Module\Http\Repositories\OrderRepository;
 use RefinedDigital\CMS\Modules\Core\Http\Repositories\CoreRepository;
+use RefinedDigital\ProductManager\Module\Events\OrderStatusUpdatedEvent;
 
 class OrderController extends CoreController
 {
-    protected $model = 'RefinedDigital\ProductManager\Module\Models\Product';
-    protected $prefix = 'products::products';
-    protected $route = 'products';
-    protected $heading = 'Products';
-    protected $button = 'a Product';
+    protected $model = 'RefinedDigital\ProductManager\Module\Models\Order';
+    protected $prefix = 'products::orders';
+    protected $route = 'orders';
+    protected $heading = 'Orders';
+    protected $button = '';
 
-    protected $productRepository;
+    protected $orderRepository;
 
     public function __construct(CoreRepository $coreRepository)
     {
-        $this->productRepository = new ProductRepository();
-        $this->productRepository->setModel($this->model);
+        $this->orderRepository = new OrderRepository();
 
         parent::__construct($coreRepository);
     }
@@ -30,16 +30,21 @@ class OrderController extends CoreController
 
         $table = new \stdClass();
         $table->fields = [
-            (object) [ 'name' => '#', 'field' => 'id', 'sortable' => true, 'classes' => ['data-table__cell--id']],
-            (object) [ 'name' => 'Name', 'field' => 'name', 'sortable' => true],
-            (object) [ 'name' => 'Categories', 'field' => 'categories', 'type' => 'tags', 'setType' => 'product_categories', 'sortable' => false],
-            (object) [ 'name' => 'Active', 'field' => 'active', 'type'=> 'select', 'options' => [1 => 'Yes', 0 => 'No'], 'sortable' => true, 'classes' => ['data-table__cell--active']],
+            (object) [ 'name' => '#', 'field' => 'id', 'sortable' => true, 'type' => 'orderId', 'classes' => ['data-table__cell--id']],
+            (object) [ 'name' => 'Name', 'field' => 'full_name', ],
+            (object) [ 'name' => 'Date', 'field' => 'created_at', 'type'=> 'orderDate', ],
+            (object) [ 'name' => 'Status', 'field' => 'order_status_id', 'type'=> 'orderStatus', ],
+            (object) [ 'name' => 'Method', 'field' => 'delivery_zone_id', 'type'=> 'deliveryZone', ],
+            (object) [ 'name' => 'Total', 'field' => 'total', 'type'=> 'price', ],
         ];
         $table->routes = (object) [
-            'edit'      => 'refined.products.edit',
-            'destroy'   => 'refined.products.destroy'
+            'edit'      => 'refined.orders.edit',
+            'destroy'   => 'refined.orders.destroy'
         ];
-        $table->sortable = true;
+        $table->sortable = false;
+
+        $this->setCanDelete(false);
+        $this->setCanCreate(false);
 
         $this->table = $table;
     }
@@ -52,6 +57,16 @@ class OrderController extends CoreController
      */
     public function edit($item)
     {
+        $buttons = $this->getButtons();
+        if (sizeof($buttons)) {
+            foreach ($buttons as $index => $button) {
+                if ($button->name === 'Save & New') {
+                    unset($buttons[$index]);
+                }
+            }
+
+            $this->setButtons($buttons);
+        }
         // get the instance
         $data = $this->model::findOrFail($item);
 
@@ -65,15 +80,9 @@ class OrderController extends CoreController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductRequest $request)
+    public function store(DeliveryRequest $request)
     {
-        $item = $this->productRepository->store($request);
-
-        $this->productRepository->syncRelated($item->id, $request->get('related_products'));
-
-        $route = $this->getReturnRoute($item->id, $request->get('action'));
-
-        return redirect($route)->with('status', 'Successfully created');
+        return parent::storeRecord($request);
     }
 
     /**
@@ -83,22 +92,18 @@ class OrderController extends CoreController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ProductRequest $request, $id)
+    public function update(OrderRequest $request, $id)
     {
-        $this->productRepository->update($id, $request);
+        $repo = new CoreRepository();
+        $repo->setModel($this->model);
+        $order = $repo->update($id, $request);
 
-        $this->productRepository->syncRelated($id, $request->get('related_products'));
+        // send the notifications
+        event(new OrderStatusUpdatedEvent($order, $request->get('order_status_id')));
 
-        $route = $this->getReturnRoute($id, $request->get('action'));
+        $route = $this->getReturnRoute($order->id, $request->get('action'));
 
         return redirect($route)->with('status', 'Successfully updated');
-    }
-
-
-    public function getForFront(Request $request)
-    {
-        $data = $this->productRepository->getForFront($request->get('perPage'));
-        return parent::formatGetForFront($data, $request);
     }
 
 }

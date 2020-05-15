@@ -20,11 +20,16 @@ class CartController
     public function add(Request $request, Product $product)
     {
         $this->cartRepository->add($product, $request);
+        $message = 'Product has been added to your cart';
 
         if ($request->ajax()) {
-            return response()->json(['success' => 'true']);
+            return response()
+                ->json(['success' => 'true', 'message', $message]);
         } else {
-            return redirect()->back()->with('success', 'true');
+            return redirect()
+                ->back()
+                ->with('success', 'true')
+                ->with(compact('message'));
         }
 
     }
@@ -33,10 +38,16 @@ class CartController
     {
         $this->cartRepository->remove($itemKey);
 
+        $message = 'Product has been removed to your cart';
+
         if ($request->ajax()) {
-            return response()->json(['success' => 'true']);
+            return response()
+                ->json(['success' => 'true', 'message', $message]);
         } else {
-            return redirect()->back()->with('success', 'true');
+            return redirect()
+                ->back()
+                ->with('success', 'true')
+                ->with(compact('message'));
         }
 
     }

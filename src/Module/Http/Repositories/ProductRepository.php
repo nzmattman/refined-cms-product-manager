@@ -5,6 +5,7 @@ namespace RefinedDigital\ProductManager\Module\Http\Repositories;
 use RefinedDigital\ProductManager\Module\Models\DeliveryZone;
 use RefinedDigital\ProductManager\Module\Models\Product;
 use RefinedDigital\CMS\Modules\Core\Http\Repositories\CoreRepository;
+use RefinedDigital\ProductManager\Module\Models\ProductStatus;
 use RefinedDigital\ProductManager\Module\Models\ProductVariation;
 
 class ProductRepository extends CoreRepository
@@ -90,7 +91,7 @@ class ProductRepository extends CoreRepository
             ->whereProductId($productId)
             ->delete();
 
-        $notType = ['price','sale_price'];
+        $notType = ['price','sale_price', 'product_status_id'];
         $values = array_map(function($item) use ($productId, $notType) {
             $value = [
                 'product_id' => $productId,
@@ -157,6 +158,13 @@ class ProductRepository extends CoreRepository
                 $valueIds = explode(',', $typeValue->product_variation_type_value_ids);
                 $price = $this->newField('Price', 'price', $typeValue->price, 8);
                 $salePrice = $this->newField('Sale Price', 'sale_price', $typeValue->sale_price, 8);
+                $status = $this->newField(
+                    'Status',
+                    'product_status_id',
+                    isset($typeValue->product_status_id) ? $typeValue->product_status_id : null,
+                    6,
+                    products()->getStatusesForView()
+                );
 
                 if ($product->variation_types->count()) {
                     foreach ($product->variation_types as $type) {
@@ -181,6 +189,7 @@ class ProductRepository extends CoreRepository
 
                 $fields['price'] = $price;
                 $fields['sale_price'] = $salePrice;
+                $fields['product_status_id'] = $status;
 
                 $rows[] = $fields;
             }
@@ -189,13 +198,17 @@ class ProductRepository extends CoreRepository
         return $rows;
     }
 
-    private function newField ($name, $fieldName, $content, $type)
+    private function newField ($name, $fieldName, $content, $type, $options = [])
     {
         $field = new \stdClass();
         $field->content = $content;
         $field->field = $fieldName;
         $field->name = $name;
         $field->page_content_type_id = $type;
+
+        if ($type === 6) {
+            $field->options = $options;
+        }
 
         return $field;
     }
@@ -213,5 +226,36 @@ class ProductRepository extends CoreRepository
         return DeliveryZone::whereActive(1)
             ->orderBy('position')
             ->get();
+    }
+
+    public function getStatuses()
+    {
+        $statuses = [];
+        $data = ProductStatus::orderBy('id', 'asc')->get();
+        if ($data->count()) {
+            foreach ($data as $d) {
+                $statuses[$d->id] = $d->name;
+            }
+        }
+
+        return $statuses;
+
+    }
+
+    public function getStatusesForView()
+    {
+        $statuses = [];
+        $data = ProductStatus::orderBy('id', 'asc')->get();
+        if ($data->count()) {
+            foreach ($data as $d) {
+                $statuses[] = [
+                    'label' => $d->name,
+                    'value' => $d->id
+                ];
+            }
+        }
+
+        return $statuses;
+
     }
 }

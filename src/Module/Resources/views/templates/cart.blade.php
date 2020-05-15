@@ -1,3 +1,5 @@
+@include('products::templates.includes.message')
+
 <div id="product-manager">
   <cart
     :cart="{{ json_encode(cart()->get()) }}"

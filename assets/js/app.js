@@ -4346,7 +4346,7 @@ var render = function() {
                     ])
                   : _vm._e(),
                 _vm._v(" "),
-                _vm.deliveryOptions.length
+                _vm.config.orders.active && _vm.deliveryOptions.length
                   ? _c("tr", [
                       _c(
                         "td",
@@ -16920,7 +16920,7 @@ var productManager = new Vue({
         total.subtract(cart.discount.amount);
       }
 
-      if (cart.delivery) {
+      if (config.orders.active && cart.delivery) {
         newTotals.delivery = cart.delivery.zone.price;
         total.add(cart.delivery.zone.price);
       }

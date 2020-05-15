@@ -56,7 +56,7 @@ export const productManager = new Vue({
         total.subtract(cart.discount.amount);
       }
 
-      if (cart.delivery) {
+      if (config.orders.active && cart.delivery) {
         newTotals.delivery = cart.delivery.zone.price;
         total.add(cart.delivery.zone.price);
       }

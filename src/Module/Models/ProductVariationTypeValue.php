@@ -16,6 +16,7 @@ class ProductVariationTypeValue extends CoreModel implements Sortable
     protected $fillable = [
         'name',
         'product_variation_type_id',
+        'product_status_id'
     ];
 
     public function type()

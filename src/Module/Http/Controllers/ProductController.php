@@ -30,7 +30,6 @@ class ProductController extends CoreController
 
         $table = new \stdClass();
         $table->fields = [
-            (object) [ 'name' => '#', 'field' => 'id', 'sortable' => true, 'classes' => ['data-table__cell--id']],
             (object) [ 'name' => 'Name', 'field' => 'name', 'sortable' => true],
             (object) [ 'name' => 'Categories', 'field' => 'categories', 'type' => 'tags', 'setType' => 'product_categories', 'sortable' => false],
             (object) [ 'name' => 'Active', 'field' => 'active', 'type'=> 'select', 'options' => [1 => 'Yes', 0 => 'No'], 'sortable' => true, 'classes' => ['data-table__cell--active']],
@@ -89,7 +88,9 @@ class ProductController extends CoreController
         $this->productRepository->update($id, $request);
 
         $this->productRepository->syncRelated($id, $request->get('related_products'));
-        $this->productRepository->syncVariations($id, $request->get('variations'));
+        if (config('products.variations.active') && $request->has('variations')) {
+            $this->productRepository->syncVariations($id, $request->get('variations'));
+        }
 
         $route = $this->getReturnRoute($id, $request->get('action'));
 

@@ -1,3 +1,5 @@
+@include('products::templates.includes.message')
+
 @if(request()->has('clear'))
   {{ cart()->clear() }}
 @endif

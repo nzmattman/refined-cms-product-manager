@@ -18,9 +18,14 @@ class CreateOrderTables extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->softDeletes();
-            $table->boolean('active')->boolean(1);
+            $table->boolean('active')->default(1);
+            $table->boolean('send_email')->default(1);
+            $table->boolean('send_sms')->default(0);
             $table->integer('position');
             $table->string('name');
+            $table->string('email_subject')->nullable();
+            $table->string('email_content')->nullable();
+            $table->string('sms_content')->nullable();
         });
 
         Schema::create('orders', function (Blueprint $table) {
@@ -49,6 +54,7 @@ class CreateOrderTables extends Migration
             $table->float('delivery')->nullable();
             $table->float('gst')->nullable();
             $table->float('total')->nullable();
+            $table->json('data')->nullable();
 
             $table->foreign('order_status_id')->references('id')->on('order_statuses')->onDelete('cascade');
         });
@@ -79,15 +85,6 @@ class CreateOrderTables extends Migration
             $table->integer('order_product_id');
             $table->integer('variation_id');
             $table->integer('variation_value_id');
-        });
-
-        Schema::create('order_emails', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamps();
-            $table->softDeletes();
-            $table->boolean('active')->default(1);
-            $table->string('name');
-            $table->longText('content');
         });
 
     }

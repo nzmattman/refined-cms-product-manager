@@ -9,15 +9,23 @@ return [
         ]
     ],
 
+    'variations' => [
+        'active' => true,
+    ],
+
     'orders' => [
         'active' => true,
+        'sms' => [
+            'active' => true,
+        ],
         'gst' => [
             'active' => true,
             'percent' => 10,
             'type' => 'inc' // inc or ex
         ],
         'currency' => 'AUD',
-        'country_code' => 'AU'
+        'country_code' => 'AU',
+        'timezone' => 'Australia/Adelaide',
     ],
 
     'cart' => [
@@ -30,14 +38,14 @@ return [
             'base_url' => ''
         ],
         'extra_fees' => [
-            [
-                'name' => 'Processing Fee',
-                'percent' => 10
-            ],
-            [
-                'name' => 'Camels',
-                'value' => 25.99
-            ]
+            // [
+            //     'name' => 'Processing Fee',
+            //     'percent' => 10
+            // ],
+            // [
+            //     'name' => 'Fixed Fee',
+            //     'value' => 25.99
+            // ]
         ],
     ],
 

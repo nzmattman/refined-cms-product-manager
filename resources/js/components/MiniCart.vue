@@ -37,7 +37,7 @@
             <td class="cart__cell cart__cell--right">${{ totals.discount | toCurrency }}</td>
           </tr>
 
-          <tr v-if="deliveryOptions.length">
+          <tr v-if="config.orders.active && deliveryOptions.length">
             <td class="cart__cell" colspan="2">
               <div><strong>Delivery: </strong></div>
               <div class="cart__delivery-zone" v-for="zone of deliveryOptions">

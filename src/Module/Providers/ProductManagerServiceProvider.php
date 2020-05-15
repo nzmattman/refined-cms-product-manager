@@ -3,6 +3,8 @@
 namespace RefinedDigital\ProductManager\Module\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Event;
 use RefinedDigital\CMS\Modules\Core\Models\PublicRouteAggregate;
 use RefinedDigital\ProductManager\Commands\Install;
 use RefinedDigital\CMS\Modules\Core\Models\PackageAggregate;
@@ -11,6 +13,7 @@ use RefinedDigital\CMS\Modules\Core\Models\RouteAggregate;
 
 class ProductManagerServiceProvider extends ServiceProvider
 {
+
     /**
      * Bootstrap the application services.
      *
@@ -48,16 +51,28 @@ class ProductManagerServiceProvider extends ServiceProvider
         app(PublicRouteAggregate::class)
             ->addRouteFile('productManager', __DIR__.'/../Http/public-routes.php');
 
+        app()->register(ProductManagerEventServiceProvider::class);
+
         $this->mergeConfigFrom(__DIR__.'/../../../config/products.php', 'ProductManager');
 
+        $activeFor = ['products', 'product-statuses'];
         $children = [
             (object) [ 'name' => 'Products', 'route' => 'products', 'activeFor' => ['products']],
-            (object) [ 'name' => 'Variation Types', 'route' => 'product-variations', 'activeFor' => ['product-variations']],
-            (object) [ 'name' => 'Delivery Options', 'route' => 'delivery-zones', 'activeFor' => ['delivery-zones']],
+            (object) [ 'name' => 'Statuses', 'route' => 'product-statuses', 'activeFor' => ['product-statuses']],
         ];
 
+        if (config('products.variations.active')) {
+            $children[] = (object) [ 'name' => 'Variation Types', 'route' => 'product-variations', 'activeFor' => ['product-variations']];
+            $activeFor[] = 'product-variations';
+        }
+
         if (config('products.orders.active')) {
+            $children[] = (object) [ 'name' => 'Delivery Options', 'route' => 'delivery-zones', 'activeFor' => ['delivery-zones']];
             $children[] = (object) [ 'name' => 'Orders', 'route' => 'orders', 'activeFor' => ['orders']];
+            $children[] = (object) [ 'name' => 'Order Notifications', 'route' => 'order-notifications', 'activeFor' => ['order-notifications']];
+            $activeFor[] = 'orders';
+            $activeFor[] = 'delivery-zones';
+            $activeFor[] = 'order-notifications';
         }
 
         $menuConfig = [
@@ -65,7 +80,7 @@ class ProductManagerServiceProvider extends ServiceProvider
             'name' => 'Product Manager',
             'icon' => 'fas fa-gift',
             'route' => 'products',
-            'activeFor' => ['products','product-variations', 'delivery-zones'],
+            'activeFor' => $activeFor,
             'children' => $children
         ];
 
