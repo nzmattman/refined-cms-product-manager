@@ -69,7 +69,9 @@ class ProductController extends CoreController
         $item = $this->productRepository->store($request);
 
         $this->productRepository->syncRelated($item->id, $request->get('related_products'));
-        $this->productRepository->syncVariations($item->id, $request->get('variations'));
+        if (config('products.variations.active') && $request->has('variations')) {
+            $this->productRepository->syncVariations($item->id, $request->get('variations'));
+        }
 
         $route = $this->getReturnRoute($item->id, $request->get('action'));
 
