@@ -23,12 +23,14 @@ class CartRepository {
             $cart->totals->extra_fees   = 0;
             $cart->totals->gst          = 0;
             $cart->totals->total        = 0;
+            $cart->totals->quantity     = 0;
 
             session()->put($this->sessionKey, $cart);
         }
 
         // adjust the urls for the products
         if ($cart->items->count()) {
+            $cart->totals->quantity = 0;
             foreach ($cart->items as $item) {
                 if (isset($item->product->uri)) {
                     if (config('products.cart.product_link.active')) {
@@ -41,7 +43,7 @@ class CartRepository {
                         $item->product->url = implode('/', $uri);
                     }
                 }
-
+                $cart->totals->quantity += $item->quantity;
                 $item->total = $item->price * $item->quantity;
             }
         }
@@ -233,6 +235,26 @@ class CartRepository {
         // add the shipping
         if (config('products.orders.active') && $cart->delivery) {
             $delivery = $cart->delivery->zone->price;
+            if (isset($cart->delivery->zone->delivery_conditions) && sizeof($cart->delivery->zone->delivery_conditions)) {
+                foreach ($cart->delivery->zone->delivery_conditions as $condition) {
+                    $field = $cart->totals->{$condition->option};
+                    if ($condition->is === '>') {
+                        if ($field > $condition->value) {
+                            $delivery = $condition->price;
+                        }
+                    }
+                    if ($condition->is === '<') {
+                        if ($field < $condition->value) {
+                            $delivery = $condition->price;
+                        }
+                    }
+                    if ($condition->is === '==') {
+                        if ($field == $condition->value) {
+                            $delivery = $condition->price;
+                        }
+                    }
+                }
+            }
             $totals += $delivery;
             $cart->totals->delivery = $delivery;
         }

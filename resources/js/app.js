@@ -58,7 +58,19 @@ export const productManager = new Vue({
 
       if (config.orders.active && cart.delivery) {
         newTotals.delivery = cart.delivery.zone.price;
-        total.add(cart.delivery.zone.price);
+        let price = cart.delivery.zone.price;
+        if (cart.delivery.zone.delivery_conditions && cart.delivery.zone.delivery_conditions.length) {
+          cart.delivery.zone.delivery_conditions.forEach(condition => {
+            const rule = `cart.totals.${condition.option} ${condition.is} ${condition.value}`;
+            if (eval(rule)) {
+              price = condition.price;
+              cart.delivery.zone.label = 0;
+            } else {
+              cart.delivery.zone.label = cart.delivery.zone.price;
+            }
+          });
+        }
+        total.add(price);
       }
 
 

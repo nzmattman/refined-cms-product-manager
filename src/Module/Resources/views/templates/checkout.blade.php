@@ -17,6 +17,7 @@
         ->setTemplateNamespace('products')
         ->setTemplate('forms.front-end.form')
         ->setDefaultFields($defaultFields)
+        ->setButtonText('Place Order')
         ->render()
     !!}
   @else

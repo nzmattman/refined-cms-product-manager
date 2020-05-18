@@ -2247,15 +2247,22 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           return true;
         }
 
+        if (!zone.postcodes && zone.price) {
+          return true;
+        }
+
         return false;
       });
       this.$nextTick(function () {
         var chosen = zoneId ? _this2.deliveryOptions.find(function (zone) {
           return zone.id === zoneId;
         }) : _this2.deliveryOptions[0];
-        chosen.isChecked = true;
 
-        _this2.setDelivery(chosen);
+        if (chosen) {
+          chosen.isChecked = true;
+
+          _this2.setDelivery(chosen);
+        }
       });
     },
     setDelivery: function setDelivery(zone) {
@@ -2266,6 +2273,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         zone: zone,
         postcode: this.postcode
       };
+      console.log(zone);
       this.updateTotals();
     },
     updateTotals: function updateTotals() {
@@ -4388,7 +4396,7 @@ var render = function() {
                                             for: "delivery_zone_" + zone.id
                                           }
                                         },
-                                        [_vm._v(_vm._s(zone.name) + ":")]
+                                        [_vm._v(_vm._s(zone.name))]
                                       )
                                     ]
                                   ),
@@ -4399,7 +4407,7 @@ var render = function() {
                                       staticClass: "cart__delivery-zone-price"
                                     },
                                     [
-                                      zone.price
+                                      zone.label
                                         ? [
                                             _vm._v(
                                               "$" +
@@ -16922,7 +16930,22 @@ var productManager = new Vue({
 
       if (config.orders.active && cart.delivery) {
         newTotals.delivery = cart.delivery.zone.price;
-        total.add(cart.delivery.zone.price);
+        var price = cart.delivery.zone.price;
+
+        if (cart.delivery.zone.delivery_conditions && cart.delivery.zone.delivery_conditions.length) {
+          cart.delivery.zone.delivery_conditions.forEach(function (condition) {
+            var rule = "cart.totals.".concat(condition.option, " ").concat(condition.is, " ").concat(condition.value);
+
+            if (eval(rule)) {
+              price = condition.price;
+              cart.delivery.zone.label = 0;
+            } else {
+              cart.delivery.zone.label = cart.delivery.zone.price;
+            }
+          });
+        }
+
+        total.add(price);
       }
 
       if (cart.extra_fees && cart.extra_fees.length) {
@@ -17271,8 +17294,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /srv/dev.com/refineddigital/product-manager/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /srv/dev.com/refineddigital/product-manager/resources/sass/cart.scss */"./resources/sass/cart.scss");
+__webpack_require__(/*! /srv/dev/refineddigital/product-manager/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /srv/dev/refineddigital/product-manager/resources/sass/cart.scss */"./resources/sass/cart.scss");
 
 
 /***/ })

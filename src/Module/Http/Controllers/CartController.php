@@ -39,13 +39,13 @@ class CartController
     {
         $this->cartRepository->updateQuantity($request);
 
-        return $this->cartRepository->getResponse($request, $message);
+        return $this->cartRepository->getResponse($request);
     }
 
     public function setDelivery(DeliveryZone $zone, Request $request)
     {
         $this->cartRepository->setDeliveryZone($zone, $request->get('postcode'));
 
-        return $this->cartRepository->getResponse($request, $message);
+        return $this->cartRepository->getResponse($request);
     }
 }

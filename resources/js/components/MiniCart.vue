@@ -44,10 +44,10 @@
                 <div>
                   <span class="cart__delivery-zone-name">
                     <input type="radio" name="deliveryZone" :id="`delivery_zone_${zone.id}`" :value="zone.id" :checked="zone.isChecked" @change="setDelivery(zone)"/>
-                    <label :for="`delivery_zone_${zone.id}`">{{ zone.name }}:</label>
+                    <label :for="`delivery_zone_${zone.id}`">{{ zone.name }}</label>
                   </span>
                   <span class="cart__delivery-zone-price">
-                    <template v-if="zone.price">${{ zone.price | toCurrency }}</template>
+                    <template v-if="zone.label">${{ zone.price | toCurrency }}</template>
                     <template v-else>Free</template>
                   </span>
                 </div>
@@ -144,6 +144,10 @@
             return true;
           }
 
+          if (!zone.postcodes && zone.price) {
+            return true;
+          }
+
           return false;
         });
 
@@ -152,8 +156,10 @@
             ? this.deliveryOptions.find(zone => zone.id === zoneId)
             : this.deliveryOptions[0];
 
-          chosen.isChecked = true;
-          this.setDelivery(chosen);
+          if (chosen) {
+            chosen.isChecked = true;
+            this.setDelivery(chosen);
+          }
         });
       },
 
@@ -166,6 +172,8 @@
           zone,
           postcode: this.postcode
         };
+
+        console.log(zone);
         this.updateTotals();
       },
 

@@ -20,16 +20,20 @@ class DeliveryZone extends CoreModel implements Sortable
         'price',
         'postcodes',
         'available_days',
-        'notes'
+        'notes',
+        'conditions',
     ];
 
     protected $casts = [
-        'available_days' => 'object'
+        'available_days' => 'object',
+        'conditions' => 'object',
     ];
 
     protected $appends = [
         'available',
-        'notes_as_html'
+        'delivery_conditions',
+        'notes_as_html',
+        'label',
     ];
 
     /**
@@ -57,7 +61,33 @@ class DeliveryZone extends CoreModel implements Sortable
                                     [ 'label' => 'Postcodes', 'name' => 'postcodes', 'required' => false, 'type' => 'textarea', 'note' => 'Comma separated values'],
                                 ],
                             ]
-                        ]
+                        ],
+                        [
+                            'name' => 'Conditions',
+                            'fields' => [
+                                [
+                                    [ 'label' => 'Conditions', 'name' => 'conditions', 'type' => 'repeatable', 'required' => false, 'hideLabel' => true, 'fields' =>
+                                        [
+                                            [ 'name' => 'Option', 'page_content_type_id' => 6, 'field' => 'option', 'options' =>
+                                                [
+                                                    [ 'value' => 'price', 'label' => 'Price'],
+                                                    [ 'value' => 'quantity', 'label' => 'Quantity'],
+                                                ]
+                                            ],
+                                            [ 'name' => 'Is', 'page_content_type_id' => 6, 'field' => 'is', 'options' =>
+                                                [
+                                                    ['value' => '>', 'label' => 'Greater than'],
+                                                    ['value' => '<', 'label' => 'Less than'],
+                                                    ['value' => '==', 'label' => 'Equal to'],
+                                                ],
+                                            ],
+                                            [ 'name' => 'Value', 'page_content_type_id' => 3, 'field' => 'value'],
+                                            [ 'name' => 'Price', 'page_content_type_id' => 3, 'field' => 'price'],
+                                        ]
+                                    ],
+                                ]
+                            ],
+                        ],
                     ]
                 ],
                 'right' => [
@@ -74,12 +104,40 @@ class DeliveryZone extends CoreModel implements Sortable
                     ]
                 ]
             ]
-        ]
+        ],
     ];
 
     public function getNotesAsHtmlAttribute()
     {
         return nl2br($this->attributes['notes']);
+    }
+
+    public function getLabelAttribute()
+    {
+        return $this->price;
+    }
+
+    public function getDeliveryConditionsAttribute()
+    {
+        $conditions = json_decode($this->conditions);
+        if (is_array($conditions) && sizeof($conditions)) {
+            $deliveryConditions = [];
+            foreach ($conditions as $cond) {
+                $data = new \stdClass();
+                foreach ($cond as $key => $value) {
+                    $content = $value->content;
+                    if ($key === 'price' || $key === 'value') {
+                        $content = (float)$value->content;
+                    }
+                    $data->{$key} = $content;
+                }
+
+                $deliveryConditions[] = $data;
+            }
+            return $deliveryConditions;
+        }
+
+        return [];
     }
 
     public function getAvailableAttribute()

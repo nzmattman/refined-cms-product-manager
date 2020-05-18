@@ -84,6 +84,7 @@ class CreateProductTables extends Migration
             $table->longText('postcodes')->nullable();
             $table->longText('notes')->nullable();
             $table->json('available_days')->nullable();
+            $table->json('conditions')->nullable();
         });
 
         Schema::create('product_statuses', function (Blueprint $table) {
