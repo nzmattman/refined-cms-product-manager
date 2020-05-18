@@ -15,6 +15,7 @@
         ->form($page->form_id)
         ->setHasPayments(true)
         ->setTemplateNamespace('products')
+        ->setTemplate('forms.front-end.form')
         ->setDefaultFields($defaultFields)
         ->render()
     !!}

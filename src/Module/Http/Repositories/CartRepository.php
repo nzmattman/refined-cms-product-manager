@@ -162,6 +162,7 @@ class CartRepository {
         $pro = new \stdClass();
         $pro->id = $product->id;
         $pro->name = $product->name;
+        $pro->code = $product->code;
         $pro->image = asset(image()
             ->load($product->image)
             ->width(config('products.cart.image.width'))
