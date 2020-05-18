@@ -13,6 +13,8 @@
     {!!
       forms()
         ->form($page->form_id)
+        ->setHasPayments(true)
+        ->setTemplateNamespace('products')
         ->setDefaultFields($defaultFields)
         ->render()
     !!}
