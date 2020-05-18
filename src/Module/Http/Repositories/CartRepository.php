@@ -301,4 +301,43 @@ class CartRepository {
             return json_decode($variation);
         }, $variations);
     }
+
+    public function getResponse($request, $message = false)
+    {
+        $with = [
+            'success' => true
+        ];
+        if ($message) {
+            $with['message'] = $message;
+        }
+        if ($request->ajax()) {
+            return response()
+                ->json($with);
+        } else {
+
+            if ($request->has('redirectToCheckout') && $request->get('redirectToCheckout')) {
+                // todo: auto grab the checkout page based on product template
+                return redirect()
+                    ->to('/checkout')
+                    ->with($with);
+            }
+
+            if ($request->has('redirectToCart') && $request->get('redirectToCart')) {
+                // todo: auto grab the cart page based on product template
+                return redirect()
+                    ->to('/cart')
+                    ->with($with);
+            }
+
+            if ($request->has('redirectTo') && $request->get('redirectTo')) {
+                return redirect()
+                    ->to($request->get('redirectTo'))
+                    ->with($with);
+            }
+
+            return redirect()
+                ->back()
+                ->with($with);
+        }
+    }
 }

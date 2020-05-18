@@ -22,16 +22,7 @@ class CartController
         $this->cartRepository->add($product, $request);
         $message = 'Product has been added to your cart';
 
-        if ($request->ajax()) {
-            return response()
-                ->json(['success' => 'true', 'message', $message]);
-        } else {
-            return redirect()
-                ->back()
-                ->with('success', 'true')
-                ->with(compact('message'));
-        }
-
+        return $this->cartRepository->getResponse($request, $message);
     }
 
     public function remove(Request $request, Product $product, $itemKey)
@@ -40,15 +31,7 @@ class CartController
 
         $message = 'Product has been removed to your cart';
 
-        if ($request->ajax()) {
-            return response()
-                ->json(['success' => 'true', 'message', $message]);
-        } else {
-            return redirect()
-                ->back()
-                ->with('success', 'true')
-                ->with(compact('message'));
-        }
+        return $this->cartRepository->getResponse($request, $message);
 
     }
 
@@ -56,21 +39,13 @@ class CartController
     {
         $this->cartRepository->updateQuantity($request);
 
-        if ($request->ajax()) {
-            return response()->json(['success' => 'true']);
-        } else {
-            return redirect()->back()->with('success', 'true');
-        }
+        return $this->cartRepository->getResponse($request, $message);
     }
 
     public function setDelivery(DeliveryZone $zone, Request $request)
     {
         $this->cartRepository->setDeliveryZone($zone, $request->get('postcode'));
 
-        if ($request->ajax()) {
-            return response()->json(['success' => 'true']);
-        } else {
-            return redirect()->back()->with('success', 'true');
-        }
+        return $this->cartRepository->getResponse($request, $message);
     }
 }

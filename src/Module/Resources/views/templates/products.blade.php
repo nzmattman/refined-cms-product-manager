@@ -5,7 +5,7 @@
 @include('products::templates.includes.message')
 
 @if ($products->count())
-  <div class="products__listing">
+  <div class="product__listing">
     @foreach ($products as $product)
       @php
         $image = '';
