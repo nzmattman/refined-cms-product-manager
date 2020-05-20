@@ -17,9 +17,9 @@ class OrderRepository {
     {
         $orderFields = [
             'order_status_id' => 1, // processing
-            'paid_at' => Carbon::now(),
             'payment_method' => $paymentMethod,
-            'data' => $data
+            'data' => $data,
+            'user_id' => auth()->check() ? auth()->user()->id : null
         ];
 
         foreach($fields as $key => $field) {
@@ -316,5 +316,12 @@ class OrderRepository {
         }
 
         return null;
+    }
+
+    public function getUserOrders($userId)
+    {
+        return Order::whereUserId($userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 }

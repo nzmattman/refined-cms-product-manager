@@ -46,8 +46,13 @@
           </tr>
           <tr v-if="totals.discount">
             <td class="cart__cell cart__cell--right cart__cell--no-border" colspan="4">&nbsp;</td>
-            <td class="cart__cell cart__cell--right"><strong>Discount: </strong></td>
-            <td class="cart__cell cart__cell--right">${{ totals.discount | toCurrency }}</td>
+            <td class="cart__cell cart__cell--right">
+              <strong>Discount: </strong>
+              <div class="cart__quantity">
+                <strong>{{ cart.discount.name }}</strong>
+              </div>
+            </td>
+            <td class="cart__cell cart__cell--right">-${{ totals.discount | toCurrency }}</td>
           </tr>
           <tr v-if="totals.delivery">
             <td class="cart__cell cart__cell--right cart__cell--no-border" colspan="4">&nbsp;</td>

@@ -52,8 +52,19 @@ export const productManager = new Vue({
       total.add(subTotal.value());
 
       if (cart.discount) {
-        newTotals.discount = cart.discount.amount;
-        total.subtract(cart.discount.amount);
+        let discount = 0;
+        if (cart.discount.amount) {
+          discount = cart.discount.amount;
+        }
+
+        if (cart.discount.percent) {
+            const rate = numeral(cart.discount.percent).divide(100).value();
+            const subTotal = total.clone().value();
+            discount = numeral(subTotal).multiply(rate).value();
+        }
+
+        newTotals.discount = discount;
+        total.subtract(discount);
       }
 
       if (config.orders.active && cart.delivery) {

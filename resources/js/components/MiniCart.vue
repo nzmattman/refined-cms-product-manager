@@ -33,8 +33,13 @@
             <td class="cart__cell cart__cell--right">${{ totals.sub_total | toCurrency }}</td>
           </tr>
           <tr v-if="totals.discount">
-            <td class="cart__cell"><strong>Discount: </strong></td>
-            <td class="cart__cell cart__cell--right">${{ totals.discount | toCurrency }}</td>
+            <td class="cart__cell">
+              <strong>Discount: </strong>
+              <div class="cart__quantity">
+                <strong>{{ cart.discount.name }}</strong>
+              </div>
+            </td>
+            <td class="cart__cell cart__cell--right">-${{ totals.discount | toCurrency }}</td>
           </tr>
 
           <tr v-if="config.orders.active && deliveryOptions.length">

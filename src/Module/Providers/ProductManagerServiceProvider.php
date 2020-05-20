@@ -37,6 +37,10 @@ class ProductManagerServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../../../config/products.php' => config_path('products.php'),
         ], 'product-manager');
+
+        $this->publishes([
+            __DIR__.'/../../../config/discounts.php' => config_path('discounts.php'),
+        ], 'discounts');
     }
 
     /**
@@ -53,7 +57,8 @@ class ProductManagerServiceProvider extends ServiceProvider
 
         app()->register(ProductManagerEventServiceProvider::class);
 
-        $this->mergeConfigFrom(__DIR__.'/../../../config/products.php', 'ProductManager');
+        $this->mergeConfigFrom(__DIR__.'/../../../config/products.php', 'product-manager');
+        $this->mergeConfigFrom(__DIR__.'/../../../config/discounts.php', 'discounts');
 
         $activeFor = ['products', 'product-statuses'];
         $children = [
@@ -70,9 +75,11 @@ class ProductManagerServiceProvider extends ServiceProvider
             $children[] = (object) [ 'name' => 'Delivery Options', 'route' => 'delivery-zones', 'activeFor' => ['delivery-zones']];
             $children[] = (object) [ 'name' => 'Orders', 'route' => 'orders', 'activeFor' => ['orders']];
             $children[] = (object) [ 'name' => 'Order Notifications', 'route' => 'order-notifications', 'activeFor' => ['order-notifications']];
+            $children[] = (object) [ 'name' => 'Discounts', 'route' => 'discounts', 'activeFor' => ['discounts']];
             $activeFor[] = 'orders';
             $activeFor[] = 'delivery-zones';
             $activeFor[] = 'order-notifications';
+            $activeFor[] = 'discounts';
         }
 
         $menuConfig = [

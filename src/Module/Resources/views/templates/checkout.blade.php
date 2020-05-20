@@ -5,9 +5,24 @@
     @php
       $cart = cart()->get();
       $defaultFields = [];
-      // todo: update this so the field ids are correct
+
       if($cart->delivery && $cart->delivery->postcode) {
           $defaultFields['cart__field--postcode'] = $cart->delivery->postcode;
+      }
+
+      if (auth()->check()) {
+          $user = auth()->user();
+          $defaultFields['cart__field--first-name'] = $user->first_name;
+          $defaultFields['cart__field--last-name'] = $user->last_name;
+          $defaultFields['cart__field--company-name'] = $user->company;
+          $defaultFields['cart__field--address'] = $user->address;
+          $defaultFields['cart__field--address-2'] = $user->address_2;
+          $defaultFields['cart__field--suburb'] = $user->city;
+          $defaultFields['cart__field--phone'] = $user->phone;
+          $defaultFields['cart__field--email'] = $user->email;
+          if (!isset($defaultFields['cart__field--postcode'])) {
+            $defaultFields['cart__field--postcode'] = $user->postcode;
+          }
       }
     @endphp
     {!!

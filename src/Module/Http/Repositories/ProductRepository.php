@@ -3,6 +3,7 @@
 namespace RefinedDigital\ProductManager\Module\Http\Repositories;
 
 use RefinedDigital\ProductManager\Module\Models\DeliveryZone;
+use RefinedDigital\ProductManager\Module\Models\Discount;
 use RefinedDigital\ProductManager\Module\Models\Product;
 use RefinedDigital\CMS\Modules\Core\Http\Repositories\CoreRepository;
 use RefinedDigital\ProductManager\Module\Models\ProductStatus;
@@ -257,5 +258,10 @@ class ProductRepository extends CoreRepository
 
         return $statuses;
 
+    }
+
+    public function getUserGroupDiscounts()
+    {
+        return Discount::whereActive(1)->whereTypeId(2)->get();
     }
 }

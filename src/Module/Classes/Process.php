@@ -8,6 +8,7 @@ use RefinedDigital\FormBuilder\Module\Http\Repositories\FormsRepository;
 use RefinedDigital\FormBuilder\Module\Http\Repositories\FormBuilderRepository;
 use RefinedDigital\ProductManager\Module\Events\OrderStatusUpdatedEvent;
 use RefinedDigital\ProductManager\Module\Http\Repositories\OrderRepository;
+use Carbon\Carbon;
 
 
 class Process implements FormBuilderCallbackInterface {
@@ -66,6 +67,9 @@ class Process implements FormBuilderCallbackInterface {
                     ->with('error', true);
             }
         }
+
+        $order->paid_at = Carbon::now();
+        $order->save();
 
         // send the notifications
         event(new OrderStatusUpdatedEvent($order, 1));

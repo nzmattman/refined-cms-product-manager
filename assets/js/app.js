@@ -2013,6 +2013,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2101,6 +2106,11 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+//
+//
+//
+//
+//
 //
 //
 //
@@ -4043,14 +4053,26 @@ var render = function() {
                         [_vm._v(" ")]
                       ),
                       _vm._v(" "),
-                      _vm._m(2),
+                      _c(
+                        "td",
+                        { staticClass: "cart__cell cart__cell--right" },
+                        [
+                          _c("strong", [_vm._v("Discount: ")]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "cart__quantity" }, [
+                            _c("strong", [
+                              _vm._v(_vm._s(_vm.cart.discount.name))
+                            ])
+                          ])
+                        ]
+                      ),
                       _vm._v(" "),
                       _c(
                         "td",
                         { staticClass: "cart__cell cart__cell--right" },
                         [
                           _vm._v(
-                            "$" +
+                            "-$" +
                               _vm._s(_vm._f("toCurrency")(_vm.totals.discount))
                           )
                         ]
@@ -4070,7 +4092,7 @@ var render = function() {
                         [_vm._v(" ")]
                       ),
                       _vm._v(" "),
-                      _vm._m(3),
+                      _vm._m(2),
                       _vm._v(" "),
                       _c(
                         "td",
@@ -4172,7 +4194,7 @@ var render = function() {
                     [_vm._v(" ")]
                   ),
                   _vm._v(" "),
-                  _vm._m(4),
+                  _vm._m(3),
                   _vm._v(" "),
                   _c("td", { staticClass: "cart__cell cart__cell--right" }, [
                     _vm._v("$" + _vm._s(_vm._f("toCurrency")(_vm.totals.total)))
@@ -4231,14 +4253,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("td", { staticClass: "cart__cell cart__cell--right" }, [
       _c("strong", [_vm._v("Sub total: ")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", { staticClass: "cart__cell cart__cell--right" }, [
-      _c("strong", [_vm._v("Discount: ")])
     ])
   },
   function() {
@@ -4339,14 +4353,20 @@ var render = function() {
                 _vm._v(" "),
                 _vm.totals.discount
                   ? _c("tr", [
-                      _vm._m(2),
+                      _c("td", { staticClass: "cart__cell" }, [
+                        _c("strong", [_vm._v("Discount: ")]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "cart__quantity" }, [
+                          _c("strong", [_vm._v(_vm._s(_vm.cart.discount.name))])
+                        ])
+                      ]),
                       _vm._v(" "),
                       _c(
                         "td",
                         { staticClass: "cart__cell cart__cell--right" },
                         [
                           _vm._v(
-                            "$" +
+                            "-$" +
                               _vm._s(_vm._f("toCurrency")(_vm.totals.discount))
                           )
                         ]
@@ -4360,7 +4380,7 @@ var render = function() {
                         "td",
                         { staticClass: "cart__cell", attrs: { colspan: "2" } },
                         [
-                          _vm._m(3),
+                          _vm._m(2),
                           _vm._v(" "),
                           _vm._l(_vm.deliveryOptions, function(zone) {
                             return _c(
@@ -4501,7 +4521,7 @@ var render = function() {
                   : _vm._e(),
                 _vm._v(" "),
                 _c("tr", [
-                  _vm._m(4),
+                  _vm._m(3),
                   _vm._v(" "),
                   _c("td", { staticClass: "cart__cell cart__cell--right" }, [
                     _vm._v("$" + _vm._s(_vm._f("toCurrency")(_vm.totals.total)))
@@ -4537,14 +4557,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("td", { staticClass: "cart__cell" }, [
       _c("strong", [_vm._v("Sub total: ")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", { staticClass: "cart__cell" }, [
-      _c("strong", [_vm._v("Discount: ")])
     ])
   },
   function() {
@@ -16924,8 +16936,22 @@ var productManager = new Vue({
       total.add(subTotal.value());
 
       if (cart.discount) {
-        newTotals.discount = cart.discount.amount;
-        total.subtract(cart.discount.amount);
+        var discount = 0;
+
+        if (cart.discount.amount) {
+          discount = cart.discount.amount;
+        }
+
+        if (cart.discount.percent) {
+          var rate = numeral__WEBPACK_IMPORTED_MODULE_4___default()(cart.discount.percent).divide(100).value();
+
+          var _subTotal = total.clone().value();
+
+          discount = numeral__WEBPACK_IMPORTED_MODULE_4___default()(_subTotal).multiply(rate).value();
+        }
+
+        newTotals.discount = discount;
+        total.subtract(discount);
       }
 
       if (config.orders.active && cart.delivery) {
@@ -16953,11 +16979,11 @@ var productManager = new Vue({
           var feeTotal = 0;
 
           if (fee.percent) {
-            var rate = numeral__WEBPACK_IMPORTED_MODULE_4___default()(fee.percent).divide(100).value();
+            var _rate = numeral__WEBPACK_IMPORTED_MODULE_4___default()(fee.percent).divide(100).value();
 
-            var _subTotal = total.clone().value();
+            var _subTotal2 = total.clone().value();
 
-            feeTotal = numeral__WEBPACK_IMPORTED_MODULE_4___default()(_subTotal).multiply(rate).value();
+            feeTotal = numeral__WEBPACK_IMPORTED_MODULE_4___default()(_subTotal2).multiply(_rate).value();
           }
 
           if (fee.value) {
@@ -16970,11 +16996,11 @@ var productManager = new Vue({
       }
 
       if (config.orders.gst.active) {
-        var rate = numeral__WEBPACK_IMPORTED_MODULE_4___default()(config.orders.gst.percent).divide(100).value();
+        var _rate2 = numeral__WEBPACK_IMPORTED_MODULE_4___default()(config.orders.gst.percent).divide(100).value();
 
-        var _subTotal2 = total.clone().value();
+        var _subTotal3 = total.clone().value();
 
-        var gst = numeral__WEBPACK_IMPORTED_MODULE_4___default()(_subTotal2).multiply(rate).value();
+        var gst = numeral__WEBPACK_IMPORTED_MODULE_4___default()(_subTotal3).multiply(_rate2).value();
         newTotals.gst = gst;
 
         if (config.orders.gst.type === 'ex') {

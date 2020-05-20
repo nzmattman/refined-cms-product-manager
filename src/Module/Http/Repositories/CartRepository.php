@@ -3,6 +3,9 @@
 namespace RefinedDigital\ProductManager\Module\Http\Repositories;
 
 
+use RefinedDigital\CMS\Modules\Users\Http\Repositories\UserRepository;
+use RefinedDigital\CMS\Modules\Users\Models\User;
+
 class CartRepository {
     protected $sessionKey = 'cart';
 
@@ -220,6 +223,27 @@ class CartRepository {
     private function updateTotals()
     {
         $cart = $this->get();
+        if (auth()->check()) {
+            $discounts = [];
+            $repo = new UserRepository();
+            $user = $repo->find(auth()->user()->id);
+            $groupDiscounts = products()->getUserGroupDiscounts();
+            $userGroupIds = $user->user_groups->pluck('id');
+
+            if ($groupDiscounts->count() && $userGroupIds->count()) {
+                foreach ($groupDiscounts as $discount) {
+                    if ($userGroupIds->contains($discount->user_group_id)) {
+                        $discounts[] = $discount;
+                    }
+                }
+            }
+
+            // only add the first discount... at the moment
+            if (sizeof($discounts)) {
+                $cart->discount = $discounts[0];
+            }
+        }
+
         $totals = $cart->items->sum(function($item) {
             return $item->price * $item->quantity;
         });
@@ -227,7 +251,14 @@ class CartRepository {
 
         // add the discount
         if ($cart->discount) {
-            $discount = $cart->discount->amount;
+            $discount = 0;
+            if ($cart->discount->amount) {
+                $discount = $cart->discount->amount;
+            }
+            if ($cart->discount->percent) {
+                $rate = $cart->discount->percent / 100;
+                $discount = $totals * $rate;
+            }
             $totals -= $discount;
             $cart->totals->discount = $discount;
         }
