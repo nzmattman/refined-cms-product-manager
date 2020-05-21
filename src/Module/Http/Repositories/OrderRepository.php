@@ -119,7 +119,38 @@ class OrderRepository {
 
             $emailRepo = new EmailRepository();
             $html = '<h3>Billing Details</h3>';
-            $html .= $emailRepo->generateHtml($request, $form, 'margin: 0 auto');
+            $config = config('products.orders.shipping_to_different');
+
+            if ($config['active']) {
+                $shippingFields = $config['fields'];
+                $shipToField = $config['ship_to_different_field'];
+
+                $shipToDifferent = null;
+                $billing = [];
+                $shipping = [];
+
+                foreach($request as $field => $value) {
+                    if ($field === $shipToField) {
+                        $shipToDifferent = $value;
+                        continue;
+                    }
+
+                    if (in_array($field, $shippingFields)) {
+                        $shipping[$field] = $value;
+                    } else if(is_numeric(strpos($field, 'field'))) {
+                        $billing[$field] = $value;
+                    }
+                }
+
+                $html .= $emailRepo->generateHtmlViaRequest($billing, $form, 'margin: 0 auto');
+                if ($shipToDifferent) {
+                    $html .= '<h3 style="margin-top: 30px;">Shipping Details</h3>';
+                    $html .= $emailRepo->generateHtmlViaRequest($shipping, $form, 'margin: 0 auto');
+                }
+            } else {
+                $html .= $emailRepo->generateHtml($request, $form, 'margin: 0 auto');
+            }
+
             return $html;
         }
 

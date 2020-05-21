@@ -18,6 +18,11 @@ return [
         'sms' => [
             'active' => true,
         ],
+        'shipping_to_different' => [
+            'active' => false,
+            'ship_to_different_field' => null,
+            'fields' => [],
+        ],
         'gst' => [
             'active' => true,
             'percent' => 10,
