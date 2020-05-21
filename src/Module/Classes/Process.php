@@ -37,6 +37,12 @@ class Process implements FormBuilderCallbackInterface {
         $orderDetails = $orderRepo->generateOrderDetailsHtml($order);
         $billingDetails = $orderRepo->generateBillingDetailsHtml($order);
 
+        help()->trace($fields);
+        help()->trace($request->all());
+        help()->trace($billingDetails);
+
+        exit();
+
         // todo: off site varification stuff
         if ($gateway) {
 

@@ -228,7 +228,7 @@ class CartRepository {
             $repo = new UserRepository();
             $user = $repo->find(auth()->user()->id);
             $groupDiscounts = products()->getUserGroupDiscounts();
-            $userGroupIds = $user->user_groups->pluck('id');
+            $userGroupIds = $user->groups->pluck('id');
 
             if ($groupDiscounts->count() && $userGroupIds->count()) {
                 foreach ($groupDiscounts as $discount) {
