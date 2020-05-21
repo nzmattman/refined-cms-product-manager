@@ -195,7 +195,7 @@ class OrderRepository {
 
     private function emailNotification($order, $emailSubject, $emailContent)
     {
-        $fields = $order->data->fields;
+        $fields = (array) $order->data->fields;
         $orderDetails = $this->generateOrderDetailsHtml($order);
         $billingDetails = $this->generateBillingDetailsHtml($order);
         $form = $this->resetForm($order->data->form);
@@ -210,8 +210,8 @@ class OrderRepository {
             '[[billing_details]]'
         ];
         $replace = [
-            isset($fields->{'First Name'}) ? $fields->{'First Name'} : '',
-            isset($fields->{'Last Name'}) ? $fields->{'Last Name'} : '',
+            isset($fields['First Name']) ? $fields['First Name'] : '',
+            isset($fields['Last Name']) ? $fields['Last Name'] : '',
             isset($order->id) ? str_pad($order->id, 4, 0, STR_PAD_LEFT) : null,
             $orderDetails,
             $billingDetails.'<p>&nbsp;</p>'
@@ -238,8 +238,8 @@ class OrderRepository {
             '[[order_number]]',
         ];
         $replace = [
-            isset($fields->{'First Name'}) ? $fields->{'First Name'} : '',
-            isset($fields->{'Last Name'}) ? $fields->{'Last Name'} : '',
+            isset($fields['First Name']) ? $fields['First Name'] : '',
+            isset($fields['Last Name']) ? $fields['Last Name'] : '',
             isset($order->id) ? str_pad($order->id, 4, 0, STR_PAD_LEFT) : null,
         ];
 

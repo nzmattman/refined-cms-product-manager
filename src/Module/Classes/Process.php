@@ -15,7 +15,7 @@ class Process implements FormBuilderCallbackInterface {
 
     public function run($request, $form) {
         $cart = cart()->get();
-        $gateway = paymentGateways()->get($request->get('payment_gateway'));
+        $gateway = null; //paymentGateways()->get($request->get('payment_gateway'));
         $emailRepo = new EmailRepository();
 
         $formBuilderRepository = new FormBuilderRepository();
@@ -44,10 +44,10 @@ class Process implements FormBuilderCallbackInterface {
                 ->setTotal($cart->totals->total)
                 ->setDescription('Order #'.str_pad($order->id, 4, 0, STR_PAD_LEFT))
                 ->setMetaData([
-                    'name' => $fields->{'First Name'}.' '.$fields->{'Last Name'},
+                    'name' => $fields['First Name'].' '.$fields['Last Name'],
                     'address' => implode(', ', $gateway->formatAddress($fields)),
-                    'phone' => $fields->Phone,
-                    'email' => $fields->Email,
+                    'phone' => $fields['Phone'],
+                    'email' => $fields['Email'],
                 ])
                 ->setCurrency(config('products.orders.currency'))
                 ->setTypeId($order->id)
