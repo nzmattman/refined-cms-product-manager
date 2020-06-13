@@ -31,7 +31,12 @@ Vue.component('cart', Cart);
 Vue.component('mini-cart', MiniCart);
 
 Vue.filter('toCurrency', value => {
-  return new Intl.NumberFormat('en-US', {minimumFractionDigits: 2}).format(value ? value.toFixed(2) : 0)
+  if (value) {
+    const v = parseFloat(value);
+    return new Intl.NumberFormat('en-US', {minimumFractionDigits: 2}).format(v.toFixed(2))
+  }
+
+  return 0;
 });
 
 import numeral from 'numeral';
