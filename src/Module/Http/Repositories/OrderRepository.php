@@ -179,8 +179,10 @@ class OrderRepository {
         $emailContent = isset($notification->id) ? $notification->email_content : null;
         $smsContent = isset($notification->id) ? $notification->sms_content : null;
 
+        $fields = (array) $order->data->fields;
+
         if ($notification->send_email) {
-            $this->emailNotification($order, $emailSubject, $emailContent);
+            $this->emailNotification($order, $fields['Email'], $emailSubject, $emailContent, $order->data->form->email_to);
         }
 
         if ($notification->send_sms) {
@@ -188,18 +190,19 @@ class OrderRepository {
         }
 
         // send the admin notification
-        if ($notificationId === 1) {
-            $this->emailNotification($order, $order->data->form->subject, $order->data->form->message);
+        if ($notificationId == '1') {
+            $this->emailNotification($order, $order->data->form->email_to, $order->data->form->subject, $order->data->form->message);
         }
     }
 
-    private function emailNotification($order, $emailSubject, $emailContent)
+    private function emailNotification($order, $email, $emailSubject, $emailContent, $replyTo = false)
     {
         $fields = (array) $order->data->fields;
         $orderDetails = $this->generateOrderDetailsHtml($order);
         $billingDetails = $this->generateBillingDetailsHtml($order);
         $form = $this->resetForm($order->data->form);
         $request = (array) $order->data->request;
+
 
         $emailRepo = new EmailRepository();
         $search = [
@@ -221,6 +224,10 @@ class OrderRepository {
         $html = str_replace($search, $replace, $emailContent);
 
         $settings = $emailRepo->settingsFromForm($form, $request);
+        $settings->to = $email;
+        if ($replyTo) {
+          $settings->reply_to = $replyTo;
+        }
         $settings->body = $html;
         $settings->form_id = $form->id;
         $settings->data = $order->data;

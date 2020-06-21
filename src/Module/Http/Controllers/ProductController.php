@@ -31,6 +31,7 @@ class ProductController extends CoreController
         $table = new \stdClass();
         $table->fields = [
             (object) [ 'name' => 'Name', 'field' => 'name', 'sortable' => true],
+            (object) [ 'name' => 'Code', 'field' => 'code', 'sortable' => true],
             (object) [ 'name' => 'Categories', 'field' => 'categories', 'type' => 'tags', 'setType' => 'product_categories', 'sortable' => false],
             (object) [ 'name' => 'Active', 'field' => 'active', 'type'=> 'select', 'options' => [1 => 'Yes', 0 => 'No'], 'sortable' => true, 'classes' => ['data-table__cell--active']],
         ];

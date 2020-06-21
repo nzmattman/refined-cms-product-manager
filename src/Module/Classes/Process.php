@@ -15,7 +15,7 @@ class Process implements FormBuilderCallbackInterface {
 
     public function run($request, $form) {
         $cart = cart()->get();
-        $gateway = null; //paymentGateways()->get($request->get('payment_gateway'));
+        $gateway = paymentGateways()->get($request->get('payment_gateway'));
         $emailRepo = new EmailRepository();
 
         $formBuilderRepository = new FormBuilderRepository();

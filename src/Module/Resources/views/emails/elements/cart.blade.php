@@ -38,6 +38,7 @@
             <td valign="top" style="{!! $cellName.$cell !!}" width="100%">
               <span style="font-size:14px">
                 <strong>{{ $item->product->name }}</strong>
+                @if (isset($item->product->code)) - {{ $item->product->code }} @endif
                 @if (isset($item->variations) && is_array($item->variations))
                   <div style="font-size: 12px;">
                     @foreach ($item->variations as $variation)
