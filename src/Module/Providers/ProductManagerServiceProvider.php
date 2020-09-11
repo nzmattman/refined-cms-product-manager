@@ -5,11 +5,11 @@ namespace RefinedDigital\ProductManager\Module\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Event;
-use RefinedDigital\CMS\Modules\Core\Models\PublicRouteAggregate;
 use RefinedDigital\ProductManager\Commands\Install;
-use RefinedDigital\CMS\Modules\Core\Models\PackageAggregate;
-use RefinedDigital\CMS\Modules\Core\Models\ModuleAggregate;
-use RefinedDigital\CMS\Modules\Core\Models\RouteAggregate;
+use RefinedDigital\CMS\Modules\Core\Aggregates\PublicRouteAggregate;
+use RefinedDigital\CMS\Modules\Core\Aggregates\PackageAggregate;
+use RefinedDigital\CMS\Modules\Core\Aggregates\ModuleAggregate;
+use RefinedDigital\CMS\Modules\Core\Aggregates\RouteAggregate;
 
 class ProductManagerServiceProvider extends ServiceProvider
 {
