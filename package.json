@@ -1,5 +1,5 @@
 {
-  "name": "@refineddigital/product-manager",
+  "name": "@refineddigital/cms-product-manager",
   "version": "1.0.5",
   "description": "Product Manager for Refined CMS",
   "main": "index.js",
@@ -28,12 +28,12 @@
   "dependencies": {
     "axios": "^0.19.2",
     "numeral": "^2.0.6",
-    "vue": "^2.6.11"
+    "vue": "^2.6.12"
   },
   "devDependencies": {
-    "laravel-mix": "^5.0.4",
-    "sass": "^1.26.5",
+    "laravel-mix": "^5.0.5",
+    "sass": "^1.26.10",
     "sass-loader": "^8.0.2",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.12"
   }
 }
