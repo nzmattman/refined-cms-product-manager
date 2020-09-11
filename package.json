@@ -1,6 +1,6 @@
 {
   "name": "@refineddigital/cms-product-manager",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Product Manager for Refined CMS",
   "main": "index.js",
   "scripts": {
