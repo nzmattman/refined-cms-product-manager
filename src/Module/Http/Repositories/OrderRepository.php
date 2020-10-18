@@ -232,6 +232,9 @@ class OrderRepository {
         $settings->form_id = $form->id;
         $settings->data = $order->data;
         $settings->subject = $subject;
+        $settings->send_as_plain_text = isset($form->send_as_plain_text) && $form->send_as_plain_text
+          ? (boolean)$form->send_as_plain_text
+          : false;
         $emailRepo->send($settings);
     }
 
