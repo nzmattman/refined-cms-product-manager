@@ -27,7 +27,7 @@
             <td class="cart__cell cart__cell--product">
               <a v-if="config.cart.product_link.active" :href="item.product.url"><strong>{{ item.product.name }}</strong></a>
               <strong v-else>{{ item.product.name }}</strong>
-              <ul class="cart__variations" v-if="item.variations.length">
+              <ul class="cart__variations" v-if="item.variations && item.variations.length">
                 <li class="cart__variation" v-if="variation.value" v-for="variation of item.variations">
                   <strong>{{ variation.name }}:</strong> <span>{{ variation.value }}</span>
                 </li>

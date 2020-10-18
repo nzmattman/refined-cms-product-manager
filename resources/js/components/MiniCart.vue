@@ -18,7 +18,7 @@
               <div class="cart__quantity">
                 <strong>Qty:</strong> {{ item.quantity }}
               </div>
-              <ul class="cart__variations" v-if="item.variations.length">
+              <ul class="cart__variations" v-if="item.variations && item.variations.length">
                 <li class="cart__variation" v-if="variation.value" v-for="variation of item.variations">
                   <span>{{ variation.value }}</span>
                 </li>
