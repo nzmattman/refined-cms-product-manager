@@ -18,9 +18,9 @@ class CreateOrdersTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->softDeletes();
+            $table->timestamp('paid_at')->nullable();
             $table->integer('order_status_id')->unsigned();
             $table->integer('user_id')->nullable();
-            $table->timestamp('paid_at')->nullable();
             $table->string('payment_method')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();

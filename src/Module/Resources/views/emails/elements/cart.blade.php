@@ -76,12 +76,12 @@
             <td valign="top" style="{!! $cellPrice.$cell !!}" width="110px"><span style="font-size:16px">${{ number_format($cart->totals->discount, 2) }}</span></td>
           </tr>
         @endif
-        @if ($cart->totals->delivery)
+        @if (isset($cart->delivery->zone->id))
           <tr>
             <td valign="top" style="{!! $cellName !!}" width="100%">&nbsp;</td>
             <td valign="top" style="{!! $cellTotal.$cell !!}" width="220px">
               <span style="font-size:16px">
-                <strong>Delivery:</strong>
+                <strong>Delivery / Pickup:</strong>
                 @if ($cart->delivery && $cart->delivery->zone)
                   <div>
                     {{ $cart->delivery->zone->name }}

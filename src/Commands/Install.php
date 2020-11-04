@@ -96,7 +96,7 @@ class Install extends Command
     {
         $this->output->writeln('<info>Creating Symlink</info>');
         try {
-            $link = getcwd().'/public/vendor/';
+            $link = public_path('vendor/');
             $target = '../../../vendor/refineddigital/cms-product-manager/assets/';
 
             // create the directories
