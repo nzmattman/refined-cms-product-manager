@@ -21,17 +21,19 @@ class ProductRepository extends CoreRepository
     {
         return $this->model::whereActive(1)
             ->search(['name','content'])
+            ->orderBy('position', 'asc')
             ->paging($perPage);
     }
 
     public function getAllForFront()
     {
-        return $this->model::whereActive(1)->get();
+        return $this->model::whereActive(1)->orderBy('position', 'asc')->get();
     }
 
     public function getForHomePage($limit = 6)
     {
         return $this->model::whereActive(1)
+            ->orderBy('position', 'asc')
             ->limit($limit)
             ->get();
     }
