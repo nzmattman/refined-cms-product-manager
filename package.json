@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/refineddigital/cms-product-manager#readme",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "numeral": "^2.0.6",
     "vue": "^2.6.12"
   },
