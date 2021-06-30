@@ -26,13 +26,15 @@ class ProductManagerServiceProvider extends ServiceProvider
             __DIR__.'/../Resources/views',
         ]);
 
-        if ($this->app->runningInConsole()) {
-            if (\DB::connection()->getDatabaseName() && !\Schema::hasTable('products')) {
-                $this->commands([
-                    Install::class,
-                ]);
+        try {
+            if ($this->app->runningInConsole()) {
+                if (\DB::connection()->getDatabaseName() && !\Schema::hasTable('products')) {
+                    $this->commands([
+                        Install::class,
+                    ]);
+                }
             }
-        }
+        } catch (\Exception $e) {}
 
         $this->publishes([
             __DIR__.'/../../../config/products.php' => config_path('products.php'),
