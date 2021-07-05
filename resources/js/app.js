@@ -1,4 +1,12 @@
-window.Vue = require('vue');
+import Vue from 'vue'
+import numeral from 'numeral';
+
+import Variations from './components/Variations'
+import Variation from './components/Variation'
+import Cart from './components/Cart'
+import MiniCart from './components/MiniCart'
+
+window.Vue = Vue;
 
 window.axios = require('axios');
 
@@ -20,11 +28,6 @@ if (token) {
 
 export const productEvents = new Vue({});
 
-import Variations from './components/Variations';
-import Variation from './components/Variation';
-import Cart from './components/Cart';
-import MiniCart from './components/MiniCart';
-
 Vue.component('product-variations', Variations);
 Vue.component('product-variation', Variation);
 Vue.component('cart', Cart);
@@ -39,7 +42,6 @@ Vue.filter('toCurrency', value => {
   return 0;
 });
 
-import numeral from 'numeral';
 export const productManager = new Vue({
   el: '#product-manager',
   methods: {
