@@ -20,11 +20,11 @@ class ProductManagerPageTableSeeder extends Seeder
     public function run()
     {
 
-        $pageHolder = new PageHolder();
-        $pageHolder->active = 1;
-        $pageHolder->position = PageHolder::count() + 1;
-        $pageHolder->name = 'Cart';
-        $pageHolder->save();
+        $pageHolderId = PageHolder::insertGetId([
+            'active' => 1,
+            'position' => PageHolder::count() + 1,
+            'name' => 'Cart',
+        ]);
 
         $templates = DB::table('templates')
             ->whereIn('name', ['Cart','Checkout'])
@@ -37,11 +37,11 @@ class ProductManagerPageTableSeeder extends Seeder
             }
         }
 
-        $productForm = Form::whereName('Checkout')->get();
+        $productForm = Form::whereName('Checkout')->first();
 
         $pages = [
             [
-                'page_holder_id' => $pageHolder->id,
+                'page_holder_id' => $pageHolderId,
                 'parent_id' => 0,
                 'active' => 1,
                 'hide_from_menu' => 0,
@@ -51,7 +51,7 @@ class ProductManagerPageTableSeeder extends Seeder
                 'name' => 'Cart'
             ],
             [
-                'page_holder_id' => $pageHolder->id,
+                'page_holder_id' => $pageHolderId,
                 'parent_id' => 0,
                 'active' => 1,
                 'hide_from_menu' => 0,
@@ -59,10 +59,10 @@ class ProductManagerPageTableSeeder extends Seeder
                 'page_type' => 1,
                 'position' => 0,
                 'name' => 'Checkout',
-                'form_id' => isset($productForm->id) ? $productForm->id : null
+                'form_id' => $productForm->id ?? null
             ],
             [
-                'page_holder_id' => $pageHolder->id,
+                'page_holder_id' => $pageHolderId,
                 'parent_id' => 0,
                 'active' => 1,
                 'hide_from_menu' => 0,
@@ -70,12 +70,25 @@ class ProductManagerPageTableSeeder extends Seeder
                 'page_type' => 1,
                 'position' => 0,
                 'name' => 'Thank You',
-                'content' => '
-                    <h2>Order Received</h2>
-                    <p>Thank you. Your order has been received.</p>
-                    <p>[[order_summary]]</p>                    
-                    <p>[[order_details]]</p>
-                '
+                'content' => [
+                    [
+                        'name' => 'Content',
+                        'fields' => [
+                            [
+                                'name' => 'Heading',
+                                'content' => 'Order Received'
+                            ],
+                            [
+                                'name' => 'Content',
+                                'content' => '
+                                    <p>Thank you. Your order has been received.</p>
+                                    <p>[[order_summary]]</p>                    
+                                    <p>[[order_details]]</p>
+                                '
+                            ]
+                        ]
+                    ]
+                ]
             ]
         ];
 
@@ -85,10 +98,8 @@ class ProductManagerPageTableSeeder extends Seeder
             $u['parent_id'] = $pageId;
             $u['created_at'] = Carbon::now();
             $u['updated_at'] = Carbon::now();
-            $content = '';
             if (isset($u['content'])) {
-                $content = $u['content'];
-                unset($u['content']);
+                $u['content'] = json_encode(json_decode(json_encode($u['content'])));
             }
 
             $pageId = DB::table('pages')->insertGetId($u);
@@ -97,25 +108,12 @@ class ProductManagerPageTableSeeder extends Seeder
                 'title'         => $u['name'],
                 'name'          => $u['name'],
                 'description'   => null,
-                'template_id'   => isset($templateLookup[$u['name']]) ? $templateLookup[$u['name']] : 1,
+                'template_id'   => $templateLookup[$u['name']] ?? 1,
                 'uriable_id'    => $pageId,
                 'uriable_type'  => 'RefinedDigital\CMS\Modules\Pages\Models\Page',
             ];
 
             Uri::create($uriData);
-
-            if ($content) {
-                DB::table('page_contents')->insert([
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                    'page_id' => $pageId,
-                    'page_content_type_id' => 1,
-                    'position' => 0,
-                    'name' => 'Content',
-                    'source' => 'content',
-                    'content' => $content
-                ]);
-            }
 
         }
     }
