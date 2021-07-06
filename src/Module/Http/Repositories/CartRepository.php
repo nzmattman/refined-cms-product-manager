@@ -54,6 +54,12 @@ class CartRepository {
         return $cart;
     }
 
+    public function getDeliveryZones()
+    {
+        $repo = new DeliveryRepository();
+        return $repo->getForFront();
+    }
+
     public function clear()
     {
         session()->forget($this->sessionKey);
@@ -105,6 +111,14 @@ class CartRepository {
 
         session()->put($this->sessionKey, $cart);
 
+        $this->updateTotals();
+    }
+
+    public function setDiscount($coupon) {
+        $cart = $this->get();
+        $cart->discount = $coupon;
+
+        session()->put($this->sessionKey, $cart);
         $this->updateTotals();
     }
 

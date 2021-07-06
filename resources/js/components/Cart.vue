@@ -4,6 +4,13 @@
       Your cart is currently empty.
     </div>
     <div class="cart" v-else>
+      <div class="cart__coupon">
+        <label for="form__coupon" class="form__label">Do you have a coupon?</label>
+        <div>
+          <input type="text" name="code" placeholder="Coupon code" class="form__control" id="form__coupon" v-model="coupon">
+          <button class="button" @click.prevent.stop="applyCoupon()">Apply Coupon</button>
+        </div>
+      </div>
       <table class="cart__table">
         <thead>
           <tr class="cart__row">
@@ -44,7 +51,7 @@
             <td class="cart__cell cart__cell--right"><strong>Sub total: </strong></td>
             <td class="cart__cell cart__cell--right">${{ totals.sub_total | toCurrency }}</td>
           </tr>
-          <tr v-if="totals.discount">
+          <tr v-if="cart.discount && totals.discount">
             <td class="cart__cell cart__cell--right cart__cell--no-border" colspan="4">&nbsp;</td>
             <td class="cart__cell cart__cell--right">
               <strong>Discount: </strong>
@@ -93,18 +100,26 @@
 
   export default {
 
-    props: ['cart', 'config', 'path'],
+    props: ['cart', 'config', 'path', 'zones'],
 
     data() {
       return {
         items: [],
-        totals: null
+        totals: null,
+        coupon: ''
       }
     },
 
     created() {
       this.items = [... this.cart.items];
       this.totals = {... this.cart.totals };
+    },
+
+    mounted() {
+      this.$nextTick(() => {
+        this.setDefaultDelivery();
+        this.updateTotals();
+      })
     },
 
     methods: {
@@ -127,6 +142,29 @@
         }
       },
 
+      setDelivery(zone) {
+
+        axios.put(`refined/products/cart/${zone.id}/set-delivery`, {
+          postcode: '*'
+        });
+
+        this.updateTotals();
+      },
+
+      setDefaultDelivery() {
+        if (!this.cart.delivery && this.zones) {
+          const possibleZones = this.zones.filter(zone => zone.postcodes === '*')
+          if (possibleZones.length) {
+            const zone = possibleZones[0]
+            this.setDelivery(zone);
+            this.cart.delivery = {
+              zone,
+              postcode: '*'
+            };
+          }
+        }
+      },
+
       updateTotal(item) {
         if (item.quantity < 1 && !confirm('A 0 quantity will remove this item, are you sure you want too do this?')) {
           // todo: one day workout how to get the original value
@@ -135,17 +173,36 @@
 
         item.total = item.price * parseInt(item.quantity, 10);
 
+        this.setDefaultDelivery();
+
         axios
           .put(`refined/products/${item.product.id}/cart/update-quantity`, {
             quantity: item.quantity,
             key: item.key
           })
-          .then((response) => {
+          .then(() => {
             if (item.quantity < 1) {
               this.removeItem(item);
             }
             this.updateTotals();
         });
+      },
+
+      applyCoupon() {
+        axios
+          .post(`refined/products/cart/get-coupon`, {
+            coupon: this.coupon
+          })
+        .then(response => {
+          if (response.data) {
+            if(response.data.success && response.data.coupon) {
+              this.cart.discount = response.data.coupon;
+              this.updateTotals();
+            } else {
+              alert('Sorry, there was an issue applying this coupon');
+            }
+          }
+        })
       },
 
       updateTotals() {

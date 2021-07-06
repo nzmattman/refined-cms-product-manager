@@ -4,8 +4,8 @@
   <cart
     :cart="{{ json_encode(cart()->get()) }}"
     :config="{{ json_encode(config('products')) }}"
+    :zones="{{ json_encode(cart()->getDeliveryZones()) }}"
     path="{{ request()->path() }}"
-
   ></cart>
 </div>
 

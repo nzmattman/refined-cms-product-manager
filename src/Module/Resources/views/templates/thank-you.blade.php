@@ -1,8 +1,19 @@
-@if (isset($page))
-  @if (session()->has('content'))
-    @php $cont = session()->get('content'); @endphp
-    {!! str_replace($cont['search'], $cont['replace'], $page->getContentBySource('content')) !!}
-  @else
-    {!! $page->getContentBySource('content') !!}
-  @endif
+@php
+  if (isset($page) && session()->has('content')) {
+    $orderContent = session()->get('content');
+    $page->content = array_map(function($content) use($orderContent) {
+        if (isset($content->content, $content->content->content)) {
+            $content->content->content = str_replace(
+              $orderContent['search'],
+              $orderContent['replace'],
+              $content->content->content
+            );
+        }
+
+        return $content;
+    }, $page->content);
+  }
+@endphp
+@if (isset($page, $page->content))
+  @include('templates.includes.content')
 @endif

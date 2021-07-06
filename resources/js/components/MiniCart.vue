@@ -130,6 +130,10 @@
         this.deliveryOptions = this.delivery.filter(zone => {
           zone.isChecked = false;
 
+          if (zone.postcodes === '*') {
+            return true;
+          }
+
           if (!zone.postcodes && !zone.price) {
             return true;
           }
@@ -178,7 +182,6 @@
           postcode: this.postcode
         };
 
-        console.log(zone);
         this.updateTotals();
       },
 

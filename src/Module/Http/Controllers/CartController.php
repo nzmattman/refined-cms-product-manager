@@ -4,6 +4,7 @@ namespace RefinedDigital\ProductManager\Module\Http\Controllers;
 
 use Illuminate\Http\Request;
 use RefinedDigital\ProductManager\Module\Http\Repositories\CartRepository;
+use RefinedDigital\ProductManager\Module\Http\Repositories\DiscountRepository;
 use RefinedDigital\ProductManager\Module\Models\DeliveryZone;
 use RefinedDigital\ProductManager\Module\Models\Product;
 
@@ -47,5 +48,25 @@ class CartController
         $this->cartRepository->setDeliveryZone($zone, $request->get('postcode'));
 
         return $this->cartRepository->getResponse($request);
+    }
+
+    public function getCoupon(Request $request)
+    {
+        $repo = new DiscountRepository();
+        $coupon = $repo->findByCode($request->get('coupon'));
+
+        $data = [
+          'success' => true,
+        ];
+
+        if (!$coupon) {
+          $data['success'] = false;
+        } else {
+          $data['coupon'] = $coupon->toArray();
+        }
+
+        $this->cartRepository->setDiscount($coupon);
+
+        return response()->json($data);
     }
 }

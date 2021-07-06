@@ -14,6 +14,10 @@ Route::namespace('ProductManager\Module\Http\Controllers')
             'as' => 'products.cart.set-delivery',
             'uses' => 'CartController@setDelivery'
         ]);
+        Route::post('refined/products/cart/get-coupon', [
+            'as' => 'products.cart.getCoupon',
+            'uses' => 'CartController@getCoupon'
+        ]);
         Route::delete('refined/products/{product}/cart/{key}', [
             'as' => 'products.cart.destroy',
             'uses' => 'CartController@remove'

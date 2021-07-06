@@ -157,6 +157,23 @@
       color: #fff;
     }
   }
+
+  &__coupon {
+    width: 450px;
+    margin-bottom: 20px;
+
+    > div {
+      display: flex;
+    }
+
+    .form__control {
+      flex: 1;
+    }
+
+    .button {
+      flex: 0 0 127px;
+    }
+  }
 }
 
 @keyframes cartSpin {

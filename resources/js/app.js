@@ -125,7 +125,8 @@ export const productManager = new Vue({
       newTotals.total = total.value();
 
       return newTotals;
-    }
+    },
+
   }
 });
 

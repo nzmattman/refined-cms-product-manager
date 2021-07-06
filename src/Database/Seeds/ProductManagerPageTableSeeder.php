@@ -70,25 +70,7 @@ class ProductManagerPageTableSeeder extends Seeder
                 'page_type' => 1,
                 'position' => 0,
                 'name' => 'Thank You',
-                'content' => [
-                    [
-                        'name' => 'Content',
-                        'fields' => [
-                            [
-                                'name' => 'Heading',
-                                'content' => 'Order Received'
-                            ],
-                            [
-                                'name' => 'Content',
-                                'content' => '
-                                    <p>Thank you. Your order has been received.</p>
-                                    <p>[[order_summary]]</p>                    
-                                    <p>[[order_details]]</p>
-                                '
-                            ]
-                        ]
-                    ]
-                ]
+                'content' => '[{"name": "Content", "fields": [{"name": "Heading", "content": "Order Received"}, {"name": "Content", "content": "<p>Thank you. Your order has been received.</p>\n <p>[[order_details]]</p> \n <p>[[billing_details]]</p>"}]}]'
             ]
         ];
 
@@ -98,9 +80,6 @@ class ProductManagerPageTableSeeder extends Seeder
             $u['parent_id'] = $pageId;
             $u['created_at'] = Carbon::now();
             $u['updated_at'] = Carbon::now();
-            if (isset($u['content'])) {
-                $u['content'] = json_encode(json_decode(json_encode($u['content'])));
-            }
 
             $pageId = DB::table('pages')->insertGetId($u);
 
