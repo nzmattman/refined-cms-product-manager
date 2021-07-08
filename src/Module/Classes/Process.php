@@ -55,6 +55,9 @@ class Process implements FormBuilderCallbackInterface {
                 ->process($request, $form, $data);
 
             if (!$response->success) {
+                $order->status = 4;
+                $order->save();
+                
                 $validator = \Validator::make(
                     ['check' => ''],
                     ['check' => 'required'],
